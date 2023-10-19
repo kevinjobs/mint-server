@@ -4,7 +4,7 @@ from flask import request
 import jwt
 
 
-salt = '&(^d)daga234235gfd&*NDF9d8fa&kda(234daf))Ngd23@#%DSFGdf235'
+SALT = '&(^d)daga234235gfd&*NDF9d8fa&kda(234daf))Ngd23@#%DSFGdf235'
 
 
 class RespCode:
@@ -13,6 +13,7 @@ class RespCode:
     DB_ERROR = 9001
     NOT_FOUND = 4004
     EXISTED = 5001
+    NO_PERMISSION = 4000
 
 
 class RespMsg:
@@ -21,6 +22,7 @@ class RespMsg:
     DB_ERROR = 'database error'
     NOT_FOUND = 'the resource doesnt exist'
     EXISTED = 'the resource existed'
+    NO_PERMISSION = 'no permission to access'
 
 
 def response(code: int, msg: str, data=None):
@@ -37,7 +39,7 @@ def generate_token(**kw):
     payload = {**kw, 'exp': datetime.utcnow() + timedelta(days=3)}
     params = {
         'payload': payload,
-        'key': salt,
+        'key': SALT,
         'algorithm': 'HS256',
         'headers': {'typ': 'jwt', 'alg': 'HS256'}
     }
@@ -46,7 +48,7 @@ def generate_token(**kw):
 
 def verify_token(token):
     try:
-        payload = jwt.decode(token, salt, algorithms=['HS256'])
+        payload = jwt.decode(token, SALT, algorithms=['HS256'])
         return payload
     except jwt.exceptions.ExpiredSignatureError:
         return 1

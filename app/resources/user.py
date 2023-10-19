@@ -1,4 +1,3 @@
-from flask import g
 from flask_restful import Resource
 from flask_restful import reqparse
 
@@ -66,14 +65,11 @@ class UserResource(Resource):
         user = UserModel.update_by_username(**args)
         return response(RespCode.OK, 'update user success', user.to_dict())
 
+    # 只有管理员和超级用户有权删除用户
     def delete(self):
         parser = reqparse.RequestParser()
         parser.add_argument('uid', type=str, location='args')
         args = parser.parse_args()
-
-        # 只有管理员和超级用户有权删除用户
-        if not (g.user['role'] == 'admin' or g.user['role'] == 'superuser'):
-            return response(RespCode.ERROR, 'permission denied.')
 
         UserModel.delete_by_uid(args['uid'])
         return response(RespCode.OK, 'delete user success')
@@ -86,7 +82,7 @@ class LoginResource(Resource):
         parser.add_argument('password', type=str, location='json')
         args = parser.parse_args()
 
-        user = UserModel.find_one_by_username(args['username'])
+        user: UserModel = UserModel.find_one_by_username(args['username'])
 
         if user.check_password(args['password']):
             data = {'token': generate_token(**user.to_dict())}

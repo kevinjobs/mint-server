@@ -61,7 +61,7 @@ class UserModel(db.Model):
             'group': self.group,
         }
 
-    def check_password(self, password):
+    def check_password(self, password) -> bool:
         return check_password_hash(self.password, password)
 
     @classmethod
