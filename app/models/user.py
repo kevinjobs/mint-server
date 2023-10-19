@@ -55,6 +55,10 @@ class UserModel(db.Model):
             'uid': self.uid,
             'nickname': self.nickname,
             'location': self.location,
+            'gender': self.gender,
+            'birthday': self.birthday,
+            'role': self.role,
+            'group': self.group,
         }
 
     def check_password(self, password):
@@ -87,8 +91,6 @@ class UserModel(db.Model):
         except Exception:
             raise DBError
 
-        print(condition)
-
         if users is None or len(users) == 0:
             items = []
             for k, v in condition.items():
@@ -113,6 +115,14 @@ class UserModel(db.Model):
             user.nickname = kw['nickname']
         if kw.get('location'):
             user.location = kw['location']
+        if kw.get('birthday'):
+            user.birthday = kw['birthday']
+        if kw.get('gender'):
+            user.gender = kw['gender']
+        if kw.get('role'):
+            user.role = kw['role']
+        if kw.get('group'):
+            user.group = kw['group']
 
         try:
             db.session.commit()
@@ -121,14 +131,14 @@ class UserModel(db.Model):
             raise DBError
 
     @classmethod
-    def delete_by_id(cls, _id):
+    def delete_by_uid(cls, uid):
         try:
-            user = cls.query.filter_by(id=_id).first()
+            user = cls.query.filter_by(uid=uid).first()
         except Exception:
             raise DBError
 
         if user is None:
-            raise NotFound('no this user [%d]' % _id)
+            raise NotFound('no this user [%s]' % uid)
 
         try:
             db.session.delete(user)
