@@ -2,6 +2,7 @@ from datetime import datetime
 from datetime import timedelta
 from flask import request
 import jwt
+import os
 
 
 SALT = '&(^d)daga234235gfd&*NDF9d8fa&kda(234daf))Ngd23@#%DSFGdf235'
@@ -14,6 +15,7 @@ class RespCode:
     NOT_FOUND = 4004
     EXISTED = 5001
     NO_PERMISSION = 4000
+    NOT_ALLOWED = 4007
 
 
 class RespMsg:
@@ -23,6 +25,7 @@ class RespMsg:
     NOT_FOUND = 'the resource doesnt exist'
     EXISTED = 'the resource existed'
     NO_PERMISSION = 'no permission to access'
+    NOT_ALLOWED = 'not allowed'
 
 
 def response(code: int, msg: str, data=None):
@@ -62,3 +65,8 @@ def extract_token():
     auth = request.headers.get('Authorization')
     if auth and auth.startswith('Bearer '):
         return auth[7:]
+
+
+def ensure_path(path: str):
+    if not os.path.exists(path):
+        os.makedirs(path)

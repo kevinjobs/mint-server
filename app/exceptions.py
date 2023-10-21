@@ -1,16 +1,18 @@
 from app.utils import response
 from app.utils import RespCode
 from app.utils import RespMsg
+from werkzeug.exceptions import HTTPException
 
 
-class RestfulError(Exception):
+class RestfulError(HTTPException):
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
-        self.code = RespCode.ERROR
-        self.msg = RespMsg.ERROR
+        self.code = self.name if isinstance(self.name, int) else RespCode.ERROR
+        self.msg = \
+            self.description \
+            if isinstance(self.description, str) else RespMsg.ERROR
 
-    @property
-    def response(self):
+    def resp(self):
         return response(self.code, self.msg)
 
 
@@ -24,14 +26,14 @@ class DBError(RestfulError):
 class Existed(RestfulError):
     def __init__(self, *args):
         super().__init__(*args)
-        self.msg = args[0] if args else RespMsg.DB_ERROR
+        self.msg = args[0] if args else RespMsg.EXISTED
         self.code = RespCode.EXISTED
 
 
 class NotFound(RestfulError):
     def __init__(self, *args):
         super().__init__(*args)
-        self.msg = args[0] if args else RespMsg.DB_ERROR
+        self.msg = args[0] if args else RespMsg.NOT_FOUND
         self.code = RespCode.NOT_FOUND
 
 
@@ -40,3 +42,10 @@ class NoPermission(RestfulError):
         super().__init__(*args)
         self.msg = args[0] if args else RespMsg.NO_PERMISSION
         self.code = RespCode.NO_PERMISSION
+
+
+class NotAllowed(RestfulError):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
+        self.msg = args[0] if args else RespMsg.NOT_ALLOWED
+        self.code = RespCode.NOT_ALLOWED
