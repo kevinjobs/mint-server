@@ -40,8 +40,9 @@ class UserResource(Resource):
         parser.add_argument('location', type=str, location='json')
         parser.add_argument('birthday', type=str, location='json')
         parser.add_argument('gender', type=str, location='json')
-        parser.add_argument('role', type=str, location='json')
-        parser.add_argument('group', type=str, location='json')
+        # 注册时为默认的用户角色和等级，无法自定义
+        # parser.add_argument('role', type=str, location='json')
+        # parser.add_argument('group', type=str, location='json')
         parser.add_argument('invitation', type=str, location='json')
         args = parser.parse_args()
         # 检查验证是否有效，无效将直接抛出错误
