@@ -153,3 +153,4 @@ cython_debug/
 
 /uploads
 /tmp
+invitations.json

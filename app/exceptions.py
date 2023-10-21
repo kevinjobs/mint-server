@@ -49,3 +49,10 @@ class NotAllowed(RestfulError):
         super().__init__(*args)
         self.msg = args[0] if args else RespMsg.NOT_ALLOWED
         self.code = RespCode.NOT_ALLOWED
+
+
+class InvalidInvitation(RestfulError):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
+        self.msg = args[0] if args else RespMsg.INVALID_INVITATION
+        self.code = RespCode.INVALID_INVITATION

@@ -1,3 +1,4 @@
+from flask import g
 from flask_restful import Resource
 from flask_restful import reqparse
 
@@ -10,10 +11,14 @@ from app.utils import del_success
 from app.utils import save_success
 from app.utils import generate_token
 from app.utils import verify_token
+from app.utils import check_permission
+from app.utils import check_invitation
+from app.utils import invalidate_invitation
 
 
 class UserResource(Resource):
     def get(self):
+        check_permission(g.user, ['admin', 'superuser'], ['admin'])
         parser = reqparse.RequestParser()
         parser.add_argument('username', type=str, location='args')
         parser.add_argument('uid', type=str, location='args')
@@ -37,14 +42,22 @@ class UserResource(Resource):
         parser.add_argument('gender', type=str, location='json')
         parser.add_argument('role', type=str, location='json')
         parser.add_argument('group', type=str, location='json')
+        parser.add_argument('invitation', type=str, location='json')
         args = parser.parse_args()
+        # 检查验证是否有效，无效将直接抛出错误
+        check_invitation(args['invitation'])
+        # 保存到数据库中
         user = UserModel(**args)
         user.save()
+        # 没有发生错误的情况下，使邀请码无效
+        invalidate_invitation(args['invitation'])
+        # 返回信息
         return save_success()
 
     def put(self):
         '''update a user
         '''
+        check_permission(g.user, ['admin', 'superuser'], ['admin'])
         parser = reqparse.RequestParser()
         parser.add_argument('uid', type=str, location='args')
         parser.add_argument('username', type=str, location='json')
@@ -61,6 +74,7 @@ class UserResource(Resource):
 
     # todo: 只有管理员和超级用户有权删除用户
     def delete(self):
+        check_permission(g.user, ['admin', 'superuser'], ['admin'])
         parser = reqparse.RequestParser()
         parser.add_argument('uid', type=str, location='args')
         args = parser.parse_args()
@@ -70,6 +84,7 @@ class UserResource(Resource):
 
 class UsersResource(Resource):
     def get(self):
+        check_permission(g.user, ['admin', 'superuser'], ['admin'])
         rets = UserModel.find()
         return find_success({
             "amount": len(rets),

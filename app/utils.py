@@ -1,9 +1,11 @@
 import os
 import time
+import json
 from datetime import datetime
 from datetime import timedelta
 from flask import request
 import jwt
+from shortuuid import uuid
 
 
 SALT = '&(^d)daga234235gfd&*NDF9d8fa&kda(234daf))Ngd23@#%DSFGdf235'
@@ -17,6 +19,7 @@ class RespCode:
     EXISTED = 5001
     NO_PERMISSION = 4000
     NOT_ALLOWED = 4007
+    INVALID_INVITATION = 8001
 
 
 class RespMsg:
@@ -27,6 +30,7 @@ class RespMsg:
     EXISTED = 'the resource existed'
     NO_PERMISSION = 'no permission to access'
     NOT_ALLOWED = 'not allowed'
+    INVALID_INVITATION = '无效的邀请码'
 
 
 def response(code: int, msg: str, data=None):
@@ -124,3 +128,61 @@ def ensure_path(path: str):
 
 def now_stamp():
     return int(round(time.time() * 1000))
+
+
+def check_permission(user, roles, groups):
+    from app.exceptions import NoPermission
+    if not (user.get('role') in roles or user.get('group') in groups):
+        raise NoPermission
+
+
+INVITATION_FILE = 'invitations.json'
+
+
+def check_invitation(c: str):
+    from app.exceptions import InvalidInvitation
+    codes = open_invitation()
+
+    i = 0
+    for invi in codes:
+        if invi['code'] == c and invi['valid']:
+            return True
+        i += 1
+
+    raise InvalidInvitation('邀请码无效或者已经被使用')
+
+
+def invalidate_invitation(c: str):
+    codes = open_invitation()
+
+    i = 0
+    for invi in codes:
+        if invi['code'] == c:
+            codes[i]['valid'] = False
+            codes[i]['registerAt'] = now_stamp()
+            with open(INVITATION_FILE, 'w') as fp:
+                json.dump(codes, fp, ensure_ascii=False, indent=2)
+            return True
+        i += 1
+
+
+def gen_invitation(counts=10):
+    codes = []
+    datas = open_invitation()
+    for _ in range(0, counts):
+        codes.append({
+            "createAt": now_stamp(),
+            "code": uuid(),
+            "valid": True,
+        })
+
+    with open(INVITATION_FILE, 'w') as fp:
+        json.dump(codes + datas, fp, ensure_ascii=False, indent=2)
+
+
+def open_invitation():
+    try:
+        with open(INVITATION_FILE, 'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return []

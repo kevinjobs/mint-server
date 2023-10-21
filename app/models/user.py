@@ -28,6 +28,8 @@ class UserModel(db.Model, BaseModel):
     # commom, admin, superuser
     role: Mapped[str] = mapped_column(String, default='commom')
     group: Mapped[str] = mapped_column(String, default='')
+    #
+    invitation: Mapped[str] = mapped_column(String, nullable=False)
 
     def __init__(self, **kw):
         super().__init__(**kw)
