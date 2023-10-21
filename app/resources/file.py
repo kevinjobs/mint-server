@@ -1,6 +1,5 @@
 import os
 from flask_restful import Resource
-from flask_restful import reqparse
 from flask import request
 from flask import send_from_directory
 from shortuuid import uuid
@@ -44,7 +43,7 @@ class UploadResource(Resource):
         # 重命名，以防止不安全的文件名
         filename = '%s.%s' % (uuid(), ext)
         # 构建下载路径
-        url = '/download?filename=' + filename
+        url = app.config['STATIC_URL_PATH'] + '/' + filename
         # 判断是否为允许上传的文件类型
         # to-do: 应当根据文件的实际类型来判断
         if ext not in ALLOWED_EXTENSIONS:
@@ -78,8 +77,8 @@ class UploadResource(Resource):
         })
 
 
-class DownloadResource(Resource):
-    def get(self):
+class StaticResource(Resource):
+    def get(self, filename):
         """download file from server
 
         Returns:
@@ -90,11 +89,6 @@ class DownloadResource(Resource):
         """
         from app.app import app
         upload_path = app.config['UPLOAD_FOLDER']
-        # 解析参数 filename
-        parser = reqparse.RequestParser()
-        parser.add_argument('filename', type=str, location='args')
-        args = parser.parse_args()
-        filename = args.get('filename')
         # 从数据库中查找文件信息
         file = FileModel.find_by_filename(filename)
         # 获取文件路径

@@ -13,7 +13,7 @@ from app.resources.user import UserResource
 from app.resources.user import UsersResource
 from app.resources.user import LoginResource
 from app.resources.file import UploadResource
-from app.resources.file import DownloadResource
+from app.resources.file import StaticResource
 from app.resources.post import PostResource
 from app.resources.post import PostsResource
 
@@ -28,7 +28,9 @@ app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3'
 app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'uploads')
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024
+app.config['STATIC_FOLDER'] = 'uploads'
+app.config['STATIC_URL_PATH'] = '/static'
 
 db.init_app(app)
 api = Api(app)
@@ -65,6 +67,6 @@ api.add_resource(UserResource, '/user')
 api.add_resource(UsersResource, '/users')
 api.add_resource(LoginResource, '/login')
 api.add_resource(UploadResource, '/upload')
-api.add_resource(DownloadResource, '/download')
+api.add_resource(StaticResource, '/static/<string:filename>')
 api.add_resource(PostResource, '/p')
 api.add_resource(PostsResource, '/posts')
