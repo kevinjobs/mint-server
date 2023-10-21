@@ -51,21 +51,21 @@ class UploadResource(Resource):
             raise NotAllowed('文件格式[%s]不被支持' % ext)
 
         # 根据不同的文件类型，保存到对应的文件夹
-        pathname = ''
+        filetype = ''
         if ext in IMG_EXTENSIONS:
-            pathname = os.path.join('img')
+            filetype = 'img'
         if ext in AUDIO_EXTENSIONS:
-            pathname = os.path.join('audio')
+            filetype = 'audio'
         if ext in DOC_EXTENSIONS:
-            pathname = os.path.join('doc')
+            filetype = 'doc'
         # 如果文件夹不存在，则创建
-        ensure_path(os.path.join(upload_path, pathname))
+        ensure_path(os.path.join(upload_path, filetype))
         # 保存文件
-        file.save(os.path.join(upload_path, pathname, filename))
+        file.save(os.path.join(upload_path, filetype, filename))
         # 创建一个数据库对象
         file_model = FileModel(
             origin=origin,
-            filepath=pathname,
+            filepath=filetype,
             filename=filename
         )
         # 保存文件信息到数据库

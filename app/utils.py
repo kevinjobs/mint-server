@@ -1,8 +1,9 @@
+import os
+import time
 from datetime import datetime
 from datetime import timedelta
 from flask import request
 import jwt
-import os
 
 
 SALT = '&(^d)daga234235gfd&*NDF9d8fa&kda(234daf))Ngd23@#%DSFGdf235'
@@ -29,6 +30,16 @@ class RespMsg:
 
 
 def response(code: int, msg: str, data=None):
+    """http response
+
+    Args:
+        code (int): self-defined code
+        msg (str): http response message
+        data (dict, optional): response data. Defaults to None.
+
+    Returns:
+        dict: response
+    """
     r = {
         'code': code,
         'msg': msg,
@@ -38,7 +49,28 @@ def response(code: int, msg: str, data=None):
     return r
 
 
+def save_success():
+    return response(RespCode.OK, 'save success')
+
+
+def find_success(data):
+    return response(RespCode.OK, 'find success', data)
+
+
+def del_success():
+    return response(RespCode.OK, 'delete success')
+
+
+def update_success():
+    return response(RespCode.OK, 'update success')
+
+
 def generate_token(**kw):
+    """generate a json web token
+
+    Returns:
+        str: json web token
+    """
     payload = {**kw, 'exp': datetime.utcnow() + timedelta(days=3)}
     params = {
         'payload': payload,
@@ -50,6 +82,14 @@ def generate_token(**kw):
 
 
 def verify_token(token):
+    """verify the json web token
+
+    Args:
+        token (str): json web token
+
+    Returns:
+        Any: a dict includes payload or any
+    """
     try:
         payload = jwt.decode(token, SALT, algorithms=['HS256'])
         return payload
@@ -62,11 +102,25 @@ def verify_token(token):
 
 
 def extract_token():
+    """extract Bearer string from Authorization
+
+    Returns:
+        string: token
+    """
     auth = request.headers.get('Authorization')
     if auth and auth.startswith('Bearer '):
         return auth[7:]
 
 
 def ensure_path(path: str):
+    """ensure the path exists
+
+    Args:
+        path (str): pathlike
+    """
     if not os.path.exists(path):
         os.makedirs(path)
+
+
+def now_stamp():
+    return int(round(time.time() * 1000))

@@ -4,6 +4,10 @@ from flask_restful import reqparse
 from app.models.user import UserModel
 from app.utils import response
 from app.utils import RespCode
+from app.utils import find_success
+from app.utils import update_success
+from app.utils import del_success
+from app.utils import save_success
 from app.utils import generate_token
 from app.utils import verify_token
 
@@ -15,22 +19,11 @@ class UserResource(Resource):
         parser.add_argument('uid', type=str, location='args')
         parser.add_argument('nickname', type=str, location='args')
         args = parser.parse_args()
-
-        if args.get('uid'):
-            user: UserModel = UserModel.find_one_by_uid(args['uid'])
-            return response(RespCode.OK, 'user found', user.to_dict())
-
-        if args.get('username'):
-            user: UserModel = UserModel.find_one_by_username(args['username'])
-            return response(RespCode.OK, 'user found', user.to_dict())
-
-        if args.get('nickname'):
-            users: list[UserModel] = None
-            users = UserModel.find_many_by_nickname(args['nickname'])
-            data = [user.to_dict() for user in users]
-            return response(RespCode.OK, 'users found', data)
-
-        return response(RespCode.ERROR, 'send username, uid, or nickname')
+        rets = UserModel.find(**args)
+        return find_success({
+            'amount': len(rets),
+            'users': [ret.to_dict() for ret in rets]
+        })
 
     def post(self):
         '''add a new user
@@ -47,12 +40,13 @@ class UserResource(Resource):
         args = parser.parse_args()
         user = UserModel(**args)
         user.save()
-        return response(RespCode.OK, 'add user success')
+        return save_success()
 
     def put(self):
         '''update a user
         '''
         parser = reqparse.RequestParser()
+        parser.add_argument('uid', type=str, location='args')
         parser.add_argument('username', type=str, location='json')
         parser.add_argument('password', type=str, location='json')
         parser.add_argument('nickname', type=str, location='json')
@@ -62,17 +56,25 @@ class UserResource(Resource):
         parser.add_argument('role', type=str, location='json')
         parser.add_argument('group', type=str, location='json')
         args = parser.parse_args()
-        user = UserModel.update_by_username(**args)
-        return response(RespCode.OK, 'update user success', user.to_dict())
+        UserModel.update(**args)
+        return update_success()
 
-    # 只有管理员和超级用户有权删除用户
+    # todo: 只有管理员和超级用户有权删除用户
     def delete(self):
         parser = reqparse.RequestParser()
         parser.add_argument('uid', type=str, location='args')
         args = parser.parse_args()
-
         UserModel.delete_by_uid(args['uid'])
-        return response(RespCode.OK, 'delete user success')
+        return del_success()
+
+
+class UsersResource(Resource):
+    def get(self):
+        rets = UserModel.find()
+        return find_success({
+            "amount": len(rets),
+            "users": [ret.to_dict() for ret in rets]
+        })
 
 
 class LoginResource(Resource):
@@ -82,7 +84,7 @@ class LoginResource(Resource):
         parser.add_argument('password', type=str, location='json')
         args = parser.parse_args()
 
-        user: UserModel = UserModel.find_one_by_username(args['username'])
+        user: UserModel = UserModel.find(username=args['username'])
 
         if user.check_password(args['password']):
             data = {'token': generate_token(**user.to_dict())}

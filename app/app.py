@@ -10,9 +10,12 @@ from app.utils import extract_token
 from app.utils import verify_token
 
 from app.resources.user import UserResource
+from app.resources.user import UsersResource
 from app.resources.user import LoginResource
 from app.resources.file import UploadResource
 from app.resources.file import DownloadResource
+from app.resources.post import PostResource
+from app.resources.post import PostsResource
 
 
 class Api(_Api):
@@ -59,6 +62,9 @@ def load_authentication():
 
 
 api.add_resource(UserResource, '/user')
+api.add_resource(UsersResource, '/users')
 api.add_resource(LoginResource, '/login')
 api.add_resource(UploadResource, '/upload')
 api.add_resource(DownloadResource, '/download')
+api.add_resource(PostResource, '/p')
+api.add_resource(PostsResource, '/posts')
