@@ -12,8 +12,8 @@ SALT = '&(^d)daga234235gfd&*NDF9d8fa&kda(234daf))Ngd23@#%DSFGdf235'
 
 
 class RespCode:
-    OK = 1
-    ERROR = 0
+    OK = 0
+    ERROR = 1
     DB_ERROR = 9001
     NOT_FOUND = 4004
     EXISTED = 5001

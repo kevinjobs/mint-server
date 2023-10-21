@@ -1,6 +1,7 @@
 import os
 from flask import Flask
 from flask_restful import Api as _Api
+from flask_cors import CORS
 from werkzeug.exceptions import HTTPException
 
 from app.db import db
@@ -33,6 +34,7 @@ app.config['STATIC_FOLDER'] = 'uploads'
 app.config['STATIC_URL_PATH'] = '/static'
 
 db.init_app(app)
+cors = CORS(app)
 api = Api(app)
 
 with app.app_context():

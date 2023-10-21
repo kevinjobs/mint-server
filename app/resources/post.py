@@ -101,6 +101,7 @@ class PostsResource(Resource):
         parser.add_argument('author', type=str, location='args')
         parser.add_argument('category', type=str, location='args')
         parser.add_argument('format', type=str, location='args')
+        parser.add_argument('type', type=str, location='args')
         parser.add_argument('offset', type=int, location='args')
         parser.add_argument('limit', type=int, location='args')
         args = parser.parse_args()
