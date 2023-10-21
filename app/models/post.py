@@ -10,7 +10,7 @@ from app.utils import now_stamp
 class PostModel(db.Model, BaseModel):
     __tablename__ = 'posts'
 
-    uploadAt: Mapped[int] = mapped_column(Integer, default=now_stamp)
+    createAt: Mapped[int] = mapped_column(Integer, default=now_stamp)
     publishAt: Mapped[int] = mapped_column(Integer, nullable=True)
     updateAt: Mapped[int] = mapped_column(Integer, nullable=True)
     # post type: article, photo, etc..
