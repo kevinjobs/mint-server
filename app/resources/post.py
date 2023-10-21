@@ -6,10 +6,19 @@ from app.utils import save_success
 from app.utils import find_success
 from app.utils import del_success
 from app.utils import update_success
+from app.utils import resolve_token
+from app.utils import check_permission
 
 
 class PostResource(Resource):
     def post(self):
+        # 注册用户以上可以 post
+        check_permission(
+            resolve_token(),
+            ['common', 'admin', 'superuser'],
+            ['admin']
+        )
+
         parser = reqparse.RequestParser()
         parser.add_argument('createAt', type=int, location='json')
         parser.add_argument('publishAt', type=int, location='json')
@@ -33,6 +42,7 @@ class PostResource(Resource):
         return save_success()
 
     def get(self):
+        # 普通用户即可获取 post
         parser = reqparse.RequestParser()
         parser.add_argument('uid', type=str, location='args')
         parser.add_argument('title', type=str, location='args')
@@ -41,6 +51,12 @@ class PostResource(Resource):
         return find_success({'post': posts[0].to_dict()})
 
     def delete(self):
+        # 管理员以上可以删除 post
+        check_permission(
+            resolve_token(),
+            ['admin', 'superuser'],
+            ['admin']
+        )
         parser = reqparse.RequestParser()
         parser.add_argument('uid', type=str, location='args')
         args = parser.parse_args()
@@ -48,6 +64,12 @@ class PostResource(Resource):
         return del_success()
 
     def put(self):
+        # 普通用户以上可以更新 post
+        check_permission(
+            resolve_token(),
+            ['common', 'admin', 'superuser'],
+            ['admin']
+        )
         parser = reqparse.RequestParser()
         parser.add_argument('uid', type=str, location='args')
         parser.add_argument('createAt', type=int, location='json')
@@ -73,6 +95,7 @@ class PostResource(Resource):
 
 class PostsResource(Resource):
     def get(self):
+        # 普通用户即可获取所有文章
         parser = reqparse.RequestParser()
         parser.add_argument('status', type=str, location='args')
         parser.add_argument('author', type=str, location='args')

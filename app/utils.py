@@ -20,6 +20,7 @@ class RespCode:
     NO_PERMISSION = 4000
     NOT_ALLOWED = 4007
     INVALID_INVITATION = 8001
+    INVALID_TOKEN = 8002
 
 
 class RespMsg:
@@ -31,6 +32,7 @@ class RespMsg:
     NO_PERMISSION = 'no permission to access'
     NOT_ALLOWED = 'not allowed'
     INVALID_INVITATION = '无效的邀请码'
+    INVALID_TOKEN = 'TOKEN 无效或者已经过期'
 
 
 def response(code: int, msg: str, data=None):
@@ -94,15 +96,25 @@ def verify_token(token):
     Returns:
         Any: a dict includes payload or any
     """
+    from app.exceptions import InvalidToken
+    if token is None:
+        raise InvalidToken('没有提供 TOKEN')
+
     try:
         payload = jwt.decode(token, SALT, algorithms=['HS256'])
         return payload
     except jwt.exceptions.ExpiredSignatureError:
-        return 1
+        raise InvalidToken('TOKEN 已经过期')
     except jwt.DecodeError:
-        return 2
+        raise InvalidToken('无法解析 TOKEN')
     except jwt.InvalidTokenError:
-        return 3
+        raise InvalidToken('无效的 TOKEN')
+
+
+def resolve_token():
+    token = extract_token()
+    payload = verify_token(token)
+    return payload
 
 
 def extract_token():
@@ -132,8 +144,13 @@ def now_stamp():
 
 def check_permission(user, roles, groups):
     from app.exceptions import NoPermission
-    if not (user.get('role') in roles or user.get('group') in groups):
-        raise NoPermission
+    if user.get('role') in roles or user.get('group') in groups:
+        return True
+    else:
+        role = user.get('role')
+        group = user.get('group')
+        s = '没有访问权限，用户角色[{}]，需要{}，用户组[{}]，需要{}'
+        raise NoPermission(s.format(role, roles, group, groups))
 
 
 INVITATION_FILE = 'invitations.json'
@@ -152,7 +169,7 @@ def check_invitation(c: str):
     raise InvalidInvitation('邀请码无效或者已经被使用')
 
 
-def invalidate_invitation(c: str):
+def invalidate_invitation(c: str, username=None):
     codes = open_invitation()
 
     i = 0
@@ -160,6 +177,7 @@ def invalidate_invitation(c: str):
         if invi['code'] == c:
             codes[i]['valid'] = False
             codes[i]['registerAt'] = now_stamp()
+            codes[i]['registerBy'] = username if username else ''
             with open(INVITATION_FILE, 'w') as fp:
                 json.dump(codes, fp, ensure_ascii=False, indent=2)
             return True

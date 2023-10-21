@@ -37,7 +37,7 @@ class UserModel(db.Model, BaseModel):
 
     def to_dict(self) -> dict:
         d = super().to_dict()
-        if hasattr(d, 'password'):
+        if d.get('password'):
             del d['password']
         return d
 

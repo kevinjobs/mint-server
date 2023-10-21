@@ -56,3 +56,10 @@ class InvalidInvitation(RestfulError):
         super().__init__(*args)
         self.msg = args[0] if args else RespMsg.INVALID_INVITATION
         self.code = RespCode.INVALID_INVITATION
+
+
+class InvalidToken(RestfulError):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
+        self.msg = args[0] if args else RespMsg.INVALID_TOKEN
+        self.code = RespCode.INVALID_TOKEN

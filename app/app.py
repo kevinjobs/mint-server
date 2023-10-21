@@ -1,17 +1,17 @@
 import os
 from flask import Flask
-from flask import g
 from flask_restful import Api as _Api
 from werkzeug.exceptions import HTTPException
 
 from app.db import db
 from app.exceptions import RestfulError
-from app.utils import extract_token
-from app.utils import verify_token
+
+from app.resources.auth import LoginResource
+from app.resources.auth import VerifyResource
+from app.resources.auth import InvitationResource
 
 from app.resources.user import UserResource
 from app.resources.user import UsersResource
-from app.resources.user import LoginResource
 from app.resources.file import UploadResource
 from app.resources.file import StaticResource
 from app.resources.post import PostResource
@@ -49,24 +49,15 @@ def handle_exception(e: Exception):
         raise e
 
 
-@app.before_request
-def load_authentication():
-    """在请求前解析 token 并将信息挂在到 g 上
-    """
-    token = extract_token()
-    payload = verify_token(token)
-    if not isinstance(payload, int):
-        g.user = {
-            'username': payload.get('username'),
-            'role': payload.get('role'),
-            'group': payload.get('group')
-        }
-
+api.add_resource(LoginResource, '/login')
+api.add_resource(VerifyResource, '/verify')
+api.add_resource(InvitationResource, '/invitations')
 
 api.add_resource(UserResource, '/user')
 api.add_resource(UsersResource, '/users')
-api.add_resource(LoginResource, '/login')
+
 api.add_resource(UploadResource, '/upload')
 api.add_resource(StaticResource, '/static/<string:filename>')
+
 api.add_resource(PostResource, '/p')
 api.add_resource(PostsResource, '/posts')

@@ -8,6 +8,8 @@ from app.utils import response
 from app.utils import RespCode
 from app.utils import RespMsg
 from app.utils import ensure_path
+from app.utils import resolve_token
+from app.utils import check_permission
 from app.exceptions import NotAllowed
 from app.models.file import FileModel
 
@@ -32,6 +34,13 @@ class UploadResource(Resource):
             url: /upload
             body: form-data
         """
+        # 注册用户以上可以上传文件
+        check_permission(
+            resolve_token(),
+            ['common', 'admin', 'superuser'],
+            ['admin']
+        )
+
         from app.app import app
         upload_path = app.config['UPLOAD_FOLDER']
         # 解析文件体
@@ -87,6 +96,7 @@ class StaticResource(Resource):
         Usage:
             url: /download?filename=xxx
         """
+        # 普通用户即可请求静态文件
         from app.app import app
         upload_path = app.config['UPLOAD_FOLDER']
         # 从数据库中查找文件信息
