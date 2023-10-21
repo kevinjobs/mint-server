@@ -48,10 +48,22 @@ class BaseModel(object):
     @classmethod
     def find(cls, **kw):
         kw = cls.purge_kw(kw)
+        offset = kw.get('offset')
+        limit = kw.get('limit')
+        if offset is not None:
+            del kw['offset']
+        else:
+            offset = 0
+
+        if limit is not None:
+            del kw['limit']
+        else:
+            limit = 10
+
         try:
-            rets = cls.query.filter_by(**kw).all()
-        except Exception:
-            raise DBError
+            rets = cls.query.filter_by(**kw).offset(offset).limit(limit).all()
+        except Exception as e:
+            raise DBError(str(e))
 
         if rets is None or len(rets) == 0:
             raise NotFound('cannot find: [%s]' % cls.concat_kw(kw))

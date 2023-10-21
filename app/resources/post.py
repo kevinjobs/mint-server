@@ -101,9 +101,13 @@ class PostsResource(Resource):
         parser.add_argument('author', type=str, location='args')
         parser.add_argument('category', type=str, location='args')
         parser.add_argument('format', type=str, location='args')
+        parser.add_argument('offset', type=int, location='args')
+        parser.add_argument('limit', type=int, location='args')
         args = parser.parse_args()
         rets = PostModel.find(**args)
         return find_success({
             'amount': len(rets),
+            'offset': args.get('offset') or 0,
+            'limit': args.get('limit') or 10,
             'posts': [ret.to_dict() for ret in rets],
         })
