@@ -1,4 +1,5 @@
 import os
+import cv2
 import time
 import json
 from datetime import datetime
@@ -33,6 +34,21 @@ class RespMsg:
     NOT_ALLOWED = 'not allowed'
     INVALID_INVITATION = '无效的邀请码'
     INVALID_TOKEN = 'TOKEN 无效或者已经过期'
+
+
+def compress_image(orgin: str, output: str):
+    """压缩图片
+
+    Args:
+        orgin (str): 原始路径
+        output (str): 输出路径
+    """
+    img = cv2.imread(orgin)
+    x, y = img.shape[0:2]
+    width = 300
+    height = int(y / (x / width))
+    img2 = cv2.resize(img, (height, width), interpolation=cv2.INTER_NEAREST)
+    cv2.imwrite(output, img2)
 
 
 def response(code: int, msg: str, data=None):

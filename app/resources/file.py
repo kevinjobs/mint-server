@@ -10,6 +10,7 @@ from app.utils import RespMsg
 from app.utils import ensure_path
 from app.utils import resolve_token
 from app.utils import check_permission
+from app.utils import compress_image
 from app.exceptions import NotAllowed
 from app.models.file import FileModel
 
@@ -66,10 +67,21 @@ class UploadResource(Resource):
             filetype = 'audio'
         if ext in DOC_EXTENSIONS:
             filetype = 'doc'
+
+        save_dir = os.path.join(upload_path, filetype)
         # 如果文件夹不存在，则创建
-        ensure_path(os.path.join(upload_path, filetype))
+        ensure_path(save_dir)
         # 保存文件
-        file.save(os.path.join(upload_path, filetype, filename))
+        save_path = os.path.join(save_dir, filename)
+        file.save(save_path)
+
+        # 如果是图片则进行压缩
+        if ext in IMG_EXTENSIONS:
+            compress_dir = os.path.join(upload_path, filetype + '-thumb')
+            ensure_path(compress_dir)
+            compress_path = os.path.join(compress_dir, 'thumb-' + filename)
+            compress_image(save_path, compress_path)
+
         # 创建一个数据库对象
         file_model = FileModel(
             origin=origin,
@@ -87,7 +99,7 @@ class UploadResource(Resource):
 
 
 class StaticResource(Resource):
-    def get(self, filename):
+    def get(self, filename: str):
         """download file from server
 
         Returns:
@@ -99,9 +111,18 @@ class StaticResource(Resource):
         # 普通用户即可请求静态文件
         from app.app import app
         upload_path = app.config['UPLOAD_FOLDER']
+        origin_filename = filename
+        filename = filename.replace('thumb-', '')
+
         # 从数据库中查找文件信息
         file = FileModel.find_by_filename(filename)
         # 获取文件路径
         filepath = os.path.join(upload_path, file.filepath)
-        # 使用自带函数传输文件到客户端
+
+        # 以 thumb 开头的，获取缩略图返回
+        if origin_filename.startswith('thumb-'):
+            filepath = os.path.join(upload_path, file.filepath + '-thumb')
+            # 使用自带函数传输文件到客户端
+            return send_from_directory(filepath, origin_filename)
+
         return send_from_directory(filepath, filename)

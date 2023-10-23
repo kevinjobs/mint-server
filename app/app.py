@@ -2,6 +2,7 @@ import os
 from flask import Flask
 from flask_restful import Api as _Api
 from flask_cors import CORS
+# from datetime import timedelta
 from werkzeug.exceptions import HTTPException
 
 from app.db import db
@@ -32,6 +33,7 @@ app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'uploads')
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024
 app.config['STATIC_FOLDER'] = 'uploads'
 app.config['STATIC_URL_PATH'] = '/static'
+# app.config['SEND_FILE_MAX_AGE_DEFAULT'] = timedelta(seconds=1)
 
 db.init_app(app)
 cors = CORS(app)
