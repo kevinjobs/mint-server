@@ -61,7 +61,8 @@ class BaseModel(object):
             limit = 10
 
         try:
-            rets = cls.query.filter_by(**kw).offset(offset).limit(limit).all()
+            rets = cls.query.filter_by(**kw) \
+                .order_by(-cls.createAt).offset(offset).limit(limit).all()
         except Exception as e:
             raise DBError(str(e))
 
