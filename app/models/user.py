@@ -26,7 +26,7 @@ class UserModel(db.Model, BaseModel):
     motto: Mapped[str] = mapped_column(String, default='')
     description: Mapped[str] = mapped_column(String, default='')
     # commom, admin, superuser
-    role: Mapped[str] = mapped_column(String, default='commom')
+    role: Mapped[str] = mapped_column(String, default='common')
     group: Mapped[str] = mapped_column(String, default='')
     #
     invitation: Mapped[str] = mapped_column(String, nullable=False)
