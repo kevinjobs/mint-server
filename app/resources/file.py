@@ -42,7 +42,7 @@ class UploadResource(Resource):
             ['admin']
         )
 
-        from app.app import app
+        from app import app
         upload_path = app.config['UPLOAD_FOLDER']
         # 解析文件体
         file = request.files['file']
@@ -109,7 +109,7 @@ class StaticResource(Resource):
             url: /download?filename=xxx
         """
         # 普通用户即可请求静态文件
-        from app.app import app
+        from app import app
         upload_path = app.config['UPLOAD_FOLDER']
         origin_filename = filename
         filename = filename.replace('thumb-', '')
