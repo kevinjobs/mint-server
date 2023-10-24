@@ -7,7 +7,7 @@ from app.utils import verify_token
 from app.utils import open_invitation
 from app.utils import resolve_token
 from app.utils import check_permission
-from app.models.user import UserModel
+from app.models import UserModel
 
 
 class LoginResource(Resource):

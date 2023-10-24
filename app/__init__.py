@@ -13,6 +13,8 @@ from app.resources.file import UploadResource
 from app.resources.file import StaticResource
 from app.resources.post import PostResource
 from app.resources.post import PostsResource
+from app.database import init_db
+from app.database import db_session
 
 
 class Api(_Api):
@@ -23,6 +25,12 @@ class Api(_Api):
 app = create_app()
 CORS(app)
 api = Api(app)
+init_db()
+
+
+@app.teardown_appcontext
+def shutdown_session(exception=None):
+    db_session.remove()
 
 
 @app.errorhandler(Exception)

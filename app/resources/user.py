@@ -1,7 +1,7 @@
 from flask_restful import Resource
 from flask_restful import reqparse
 
-from app.models.user import UserModel
+from app.models import UserModel
 from app.utils import find_success
 from app.utils import update_success
 from app.utils import del_success

@@ -1,7 +1,7 @@
 from flask_restful import Resource
 from flask_restful import reqparse
 
-from app.models.post import PostModel
+from app.models import PostModel
 from app.utils import save_success
 from app.utils import find_success
 from app.utils import del_success

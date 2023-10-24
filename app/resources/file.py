@@ -12,7 +12,7 @@ from app.utils import resolve_token
 from app.utils import check_permission
 from app.utils import compress_image
 from app.exceptions import NotAllowed
-from app.models.file import FileModel
+from app.models import FileModel
 
 
 IMG_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
