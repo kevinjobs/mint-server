@@ -1,6 +1,6 @@
-from app.utils import response
-from app.utils import RespCode
-from app.utils import RespMsg
+from app.utils.reponse import response
+from app.constants import RespCode
+from app.constants import RespMsg
 from werkzeug.exceptions import HTTPException
 
 
@@ -63,3 +63,10 @@ class InvalidToken(RestfulError):
         super().__init__(*args)
         self.msg = args[0] if args else RespMsg.INVALID_TOKEN
         self.code = RespCode.INVALID_TOKEN
+
+
+class IncorrectInfo(RestfulError):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
+        self.msg = args[0] if args else RespMsg.INCORRET_INFO
+        self.code = RespCode.INCORRET_INFO

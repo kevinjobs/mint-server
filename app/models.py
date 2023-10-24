@@ -1,3 +1,5 @@
+from werkzeug.security import generate_password_hash as gen_password
+from werkzeug.security import check_password_hash as check_password
 from sqlalchemy import Column
 from sqlalchemy import Integer
 from sqlalchemy import String
@@ -124,7 +126,6 @@ class Base(object):
 class UserModel(BaseModel, Base):
     __tablename__ = 'users'
 
-    registerAt = Column(Integer, default=now_stamp)
     username = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
     #
@@ -141,6 +142,19 @@ class UserModel(BaseModel, Base):
     #
     invitation = Column(String, nullable=False)
 
+    def __init__(self, **kw):
+        super().__init__(**kw)
+        self.password = gen_password(self.password, 'pbkdf2:sha1', 16)
+
+    def to_dict(self) -> dict:
+        d = super().to_dict()
+        if d.get('password'):
+            del d['password']
+        return d
+
+    def check_password(self, password) -> bool:
+        return check_password(self.password, password)
+
 
 class FileModel(BaseModel, Base):
     __tablename__ = 'files'
@@ -148,7 +162,6 @@ class FileModel(BaseModel, Base):
     origin = Column(String, nullable=False)
     filepath = Column(String, nullable=False)
     filename = Column(String, nullable=False)
-    uploadAt = Column(Integer, default=now_stamp)
 
     def __init__(self, **kw):
         self.origin = kw.get('origin')
@@ -189,7 +202,7 @@ class PostModel(BaseModel, Base):
     content = Column(String, default='')
     excerpt = Column(String, nullable='')
 
-    cover = Column(String, nullable=True)
+    # cover = Column(String, nullable=True)
     status = Column(String, default='draft')
     tags = Column(String, default='')
     category = Column(String, default='')
