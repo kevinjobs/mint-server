@@ -154,3 +154,4 @@ cython_debug/
 /upload
 /tmp
 invitations.json
+*.sqlite

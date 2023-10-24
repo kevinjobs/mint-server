@@ -36,7 +36,7 @@ class Base(object):
             return
         except IntegrityError as e:
             if e.code == 'gkpj':
-                raise Existed
+                raise Existed('某个字段未通过唯一值验证')
             else:
                 raise DBError(str(e))
         except Exception as e:
@@ -200,7 +200,7 @@ class PostModel(BaseModel, Base):
     title = Column(String, unique=True, nullable=False)
     author = Column(String, nullable=False)
     content = Column(String, default='')
-    excerpt = Column(String, nullable='')
+    excerpt = Column(String, default='')
 
     # cover = Column(String, nullable=True)
     status = Column(String, default='draft')
