@@ -3,7 +3,7 @@ from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import declarative_base
 
-engine = create_engine('sqlite:///test.db')
+engine = create_engine('sqlite:///mintforge.sqlite')
 db_session = scoped_session(sessionmaker(
                             autocommit=False,
                             autoflush=False,

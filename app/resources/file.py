@@ -1,4 +1,5 @@
 import os
+from flask import current_app as app
 from flask_restful import Resource
 from flask import request
 from flask import send_from_directory
@@ -41,8 +42,6 @@ class UploadResource(Resource):
             ['common', 'admin', 'superuser'],
             ['admin']
         )
-
-        from app import app
         upload_path = app.config['UPLOAD_FOLDER']
         # 解析文件体
         file = request.files['file']
@@ -109,7 +108,6 @@ class StaticResource(Resource):
             url: /download?filename=xxx
         """
         # 普通用户即可请求静态文件
-        from app import app
         upload_path = app.config['UPLOAD_FOLDER']
         origin_filename = filename
         filename = filename.replace('thumb-', '')
