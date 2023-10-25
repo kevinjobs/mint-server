@@ -22,6 +22,12 @@ def compress_image(orgin: str, output: str):
     cv2.imwrite(output, img2)
 
 
+def read_image_wh(p: str):
+    img = cv2.imread(p)
+    x, y = img.shape[0:2]
+    return y, x
+
+
 def ensure_path(path: str):
     """ensure the path exists
 

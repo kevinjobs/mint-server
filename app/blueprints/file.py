@@ -7,6 +7,7 @@ from shortuuid import uuid
 from app.models import FileModel
 from app.utils import ensure_path
 from app.utils import compress_image
+from app.utils import read_image_wh
 from app.utils.reponse import response
 from app.utils.auth import PermCheck
 from app.exceptions import NotAllowed
@@ -69,6 +70,11 @@ def upload_file():
     save_path = os.path.join(save_dir, filename)
     file.save(save_path)
 
+    if ext in IMG_EXTENSIONS:
+        w, h = read_image_wh(save_path)
+    else:
+        w, h = 0, 0
+
     # 如果是图片则进行压缩
     if ext in IMG_EXTENSIONS:
         compress_dir = os.path.join(upload_path, filetype + '-thumb')
@@ -89,6 +95,9 @@ def upload_file():
         'filename': filename,
         'origin': origin,
         'url': url,
+        'width': w,
+        'height': h,
+        'ext': ext
     })
 
 
