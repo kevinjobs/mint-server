@@ -19,6 +19,7 @@ class Base(object):
     uid = Column(String, unique=True, default=uuid)
     updateAt = Column(Integer, nullable=True)
     createAt = Column(Integer, default=now_stamp)
+    deleteAt = Column(Integer, nullable=True)
 
     def __init__(self, **kw):
         for k, v in kw.items():
@@ -47,6 +48,7 @@ class Base(object):
         for attr, value in self.__dict__.items():
             if not attr.startswith('_sa_instance'):
                 d[attr] = value
+        del d['deleteAt']
         return d
 
     @classmethod
@@ -54,6 +56,7 @@ class Base(object):
         kw = cls.purge_kw(kw)
         offset = kw.get('offset')
         limit = kw.get('limit')
+
         if offset is not None:
             del kw['offset']
         else:
@@ -63,6 +66,8 @@ class Base(object):
             del kw['limit']
         else:
             limit = 10
+
+        kw['deleteAt'] = None
 
         try:
             rets = cls.query.filter_by(**kw) \
@@ -82,9 +87,9 @@ class Base(object):
     @classmethod
     def delete_by_uid(cls, uid: str):
         ret = cls.find_by_uid(uid)
-
+        ret.deleteAt = now_stamp()
         try:
-            db_session.delete(ret)
+            # db_session.delete(ret)
             db_session.commit()
         except Exception:
             raise DBError('delete [%s] failed' % uid)
@@ -118,7 +123,7 @@ class Base(object):
     def purge_kw(kw: dict):
         kws = {**kw}
         for k, v in kws.items():
-            if v is None:
+            if v is None or v == 'all':
                 del kw[k]
         return kw
 
