@@ -108,8 +108,8 @@ class Base(object):
         try:
             db_session.commit()
             return ret
-        except Exception:
-            raise DBError
+        except Exception as e:
+            raise DBError(str(e))
 
     @staticmethod
     def concat_kw(kw: dict):

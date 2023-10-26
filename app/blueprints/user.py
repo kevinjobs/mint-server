@@ -30,10 +30,18 @@ def register():
     args['username'] = str
     args['password'] = str
     args['nickname'] = str
+
     args['location'] = str
     args['birthday'] = str
     args['gender'] = str
+
+    # 注册时需验证邀请码
     args['invitation'] = str
+
+    args['motto'] = str
+    args['avatar'] = str
+    args['description'] = str
+
     kw = Parser.parse_json(**args)
     # 验证邀请码
     check_invitation(kw.get('invitation'))
@@ -51,11 +59,20 @@ def update_user():
     args['username'] = str
     args['password'] = str
     args['nickname'] = str
-    args['location'] = str
-    args['birthday'] = str
+
     args['gender'] = str
-    args['role'] = str
-    args['group'] = str
+    args['birthday'] = int
+    args['location'] = str
+
+    # 暂时只允许 superuser 调整用户等级
+    if PermCheck.is_superuser():
+        args['role'] = str
+        args['group'] = str
+
+    args['motto'] = str
+    args['avatar'] = str
+    args['description'] = str
+
     uid = Parser.parse_args(uid=str).get('uid')
     kw = Parser.parse_json(**args)
     UserModel.update(uid=uid, **kw)
