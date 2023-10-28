@@ -86,7 +86,8 @@ class Base(object):
 
     @classmethod
     def find_by_uid(cls, uid: str):
-        return cls.find(uid=uid)[0]
+        ret, counts = cls.find(uid=uid)
+        return ret[0]
 
     @classmethod
     def delete_by_uid(cls, uid: str):
