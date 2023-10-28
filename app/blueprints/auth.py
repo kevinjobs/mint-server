@@ -33,11 +33,11 @@ def get_invitation_list():
 @auth_bp.post('/token')
 def get_token():
     kw = Parser.parse_json(username=str, password=str)
-    user: UserModel = UserModel.find(username=kw.get('username'))[0]
+    users, counts = UserModel.find(username=kw.get('username'))
 
-    if not user.check_password(kw.get('password')):
+    if not users[0].check_password(kw.get('password')):
         raise IncorrectInfo
 
     return response(0, '获取 TOKEN 成功', {
-        'token': generate_token(**user.to_dict())
+        'token': generate_token(**users[0].to_dict())
     })

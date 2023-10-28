@@ -72,8 +72,9 @@ def get_post_list():
     args['offset'] = int
     args['limit'] = int
     kw = Parser.parse_args(**args)
-    rets = PostModel.find(**kw)
+    rets, counts = PostModel.find(**kw)
     return find_success({
+        'totals': counts,
         'amount': len(rets),
         'offset': kw.get('offset') or 0,
         'limit': kw.get('limit') or 10,

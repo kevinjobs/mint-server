@@ -3,6 +3,7 @@ from werkzeug.security import check_password_hash as check_password
 from sqlalchemy import Column
 from sqlalchemy import Integer
 from sqlalchemy import String
+from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from shortuuid import uuid
 
@@ -70,6 +71,9 @@ class Base(object):
         kw['deleteAt'] = None
 
         try:
+            counts = db_session.query(func.count(cls.id)).filter_by(**kw) \
+                .scalar()
+
             rets = cls.query.filter_by(**kw) \
                 .order_by(-cls.createAt).offset(offset).limit(limit).all()
         except Exception as e:
@@ -78,7 +82,7 @@ class Base(object):
         if rets is None or len(rets) == 0:
             raise NotFound('cannot find: [%s]' % cls.concat_kw(kw))
 
-        return rets
+        return rets, counts
 
     @classmethod
     def find_by_uid(cls, uid: str):

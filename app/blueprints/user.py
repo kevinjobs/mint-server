@@ -17,8 +17,9 @@ user_bp = Blueprint('user', __name__, url_prefix='/user')
 def get_user():
     PermCheck.common_above()
     kw = Parser.parse_args(uid=str, nickname=str, username=str)
-    rets = UserModel.find(**kw)
+    rets, counts = UserModel.find(**kw)
     return find_success({
+        'totals': counts,
         'amount': len(rets),
         'users': [ret.to_dict() for ret in rets]
     })
@@ -91,8 +92,9 @@ def delete_user():
 def get_user_list():
     PermCheck.admin_above()
     kw = Parser.parse_args(offset=int, limit=int, username=str, nickname=str)
-    rets = UserModel.find(**kw)
+    rets, counts = UserModel.find(**kw)
     return find_success({
+        'totals': counts,
         'amount': len(rets),
         'users': [ret.to_dict() for ret in rets]
     })
