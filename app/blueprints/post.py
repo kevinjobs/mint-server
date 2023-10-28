@@ -32,7 +32,7 @@ ARGS['description'] = str
 @post_bp.get('/p')
 def get_post():
     kw = Parser.parse_args(uid=str, title=str)
-    rets = PostModel.find(**kw)
+    rets, counts = PostModel.find(**kw)
     return find_success({'post': rets[0].to_dict()})
 
 
