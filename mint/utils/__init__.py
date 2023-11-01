@@ -4,7 +4,7 @@ import time
 import json
 from shortuuid import uuid
 
-from app.constants import FilePath
+from mint.constants import FilePath
 
 
 def compress_image(orgin: str, output: str):
@@ -43,7 +43,7 @@ def now_stamp():
 
 
 def check_invitation(c: str):
-    from app.exceptions import InvalidInvitation
+    from mint.exceptions import InvalidInvitation
     codes = open_invitation()
 
     i = 0

@@ -2,13 +2,13 @@ import os
 from flask import Flask
 from flask_cors import CORS
 from werkzeug.exceptions import HTTPException
-from app.exceptions import RestfulError
-from app.database import init_db
-from app.database import db_session
-from app.blueprints.user import user_bp
-from app.blueprints.file import file_bp
-from app.blueprints.auth import auth_bp
-from app.blueprints.post import post_bp
+from mint.exceptions import RestfulError
+from mint.database import init_db
+from mint.database import db_session
+from mint.blueprints.user import user_bp
+from mint.blueprints.file import file_bp
+from mint.blueprints.auth import auth_bp
+from mint.blueprints.post import post_bp
 
 
 def create_app(test_config=None):

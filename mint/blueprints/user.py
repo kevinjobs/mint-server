@@ -1,13 +1,13 @@
 from flask import Blueprint
-from app.models import UserModel
-from app.utils.reponse import find_success
-from app.utils.reponse import save_success
-from app.utils.reponse import update_success
-from app.utils.reponse import del_success
-from app.utils.parser import Parser
-from app.utils.auth import PermCheck
-from app.utils import check_invitation
-from app.utils import invalidate_invitation
+from mint.models import UserModel
+from mint.utils.reponse import find_success
+from mint.utils.reponse import save_success
+from mint.utils.reponse import update_success
+from mint.utils.reponse import del_success
+from mint.utils.parser import Parser
+from mint.utils.auth import PermCheck
+from mint.utils import check_invitation
+from mint.utils import invalidate_invitation
 
 
 user_bp = Blueprint('user', __name__, url_prefix='/user')

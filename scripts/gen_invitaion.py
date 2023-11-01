@@ -1,4 +1,4 @@
-from app.utils import gen_invitation
+from mint.utils import gen_invitation
 # from app.utils import check_invitation
 
 

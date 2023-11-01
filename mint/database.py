@@ -14,7 +14,7 @@ BaseModel.query = db_session.query_property()
 
 
 def init_db():
-    from app.models import UserModel
-    from app.models import FileModel
-    from app.models import PostModel
+    from mint.models import UserModel
+    from mint.models import FileModel
+    from mint.models import PostModel
     BaseModel.metadata.create_all(bind=engine)

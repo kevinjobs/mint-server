@@ -1,11 +1,11 @@
 from flask import Blueprint
-from app.models import PostModel
-from app.utils.reponse import find_success
-from app.utils.reponse import save_success
-from app.utils.reponse import update_success
-from app.utils.reponse import del_success
-from app.utils.parser import Parser
-from app.utils.auth import PermCheck
+from mint.models import PostModel
+from mint.utils.reponse import find_success
+from mint.utils.reponse import save_success
+from mint.utils.reponse import update_success
+from mint.utils.reponse import del_success
+from mint.utils.parser import Parser
+from mint.utils.auth import PermCheck
 
 
 post_bp = Blueprint('post', __name__)

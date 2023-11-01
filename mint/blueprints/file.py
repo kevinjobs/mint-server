@@ -4,13 +4,13 @@ from flask import request
 from flask import current_app as app
 from flask import send_from_directory
 from shortuuid import uuid
-from app.models import FileModel
-from app.utils import ensure_path
-from app.utils import compress_image
-from app.utils import read_image_wh
-from app.utils.reponse import response
-from app.utils.auth import PermCheck
-from app.exceptions import NotAllowed
+from mint.models import FileModel
+from mint.utils import ensure_path
+from mint.utils import compress_image
+from mint.utils import read_image_wh
+from mint.utils.reponse import response
+from mint.utils.auth import PermCheck
+from mint.exceptions import NotAllowed
 
 
 IMG_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']

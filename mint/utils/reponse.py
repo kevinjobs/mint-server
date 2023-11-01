@@ -1,4 +1,4 @@
-from app.constants import RespCode
+from mint.constants import RespCode
 
 
 def save_success(data=None):

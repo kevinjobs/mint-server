@@ -2,9 +2,9 @@ import jwt
 from datetime import datetime
 from datetime import timedelta
 from flask import request
-from app.constants import SecretCode
-from app.exceptions import InvalidToken
-from app.exceptions import NoPermission
+from mint.constants import SecretCode
+from mint.exceptions import InvalidToken
+from mint.exceptions import NoPermission
 
 
 def verify_token(token):

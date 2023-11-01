@@ -1,12 +1,12 @@
 from flask import Blueprint
-from app.models import UserModel
-from app.utils.reponse import find_success
-from app.utils.reponse import response
-from app.utils.parser import Parser
-from app.utils.auth import PermCheck
-from app.utils.auth import generate_token
-from app.utils import open_invitation
-from app.exceptions import IncorrectInfo
+from mint.models import UserModel
+from mint.utils.reponse import find_success
+from mint.utils.reponse import response
+from mint.utils.parser import Parser
+from mint.utils.auth import PermCheck
+from mint.utils.auth import generate_token
+from mint.utils import open_invitation
+from mint.exceptions import IncorrectInfo
 
 
 auth_bp = Blueprint('auth', __name__)

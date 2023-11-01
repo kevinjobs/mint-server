@@ -1,6 +1,6 @@
-from app.utils.reponse import response
-from app.constants import RespCode
-from app.constants import RespMsg
+from mint.utils.reponse import response
+from mint.constants import RespCode
+from mint.constants import RespMsg
 from werkzeug.exceptions import HTTPException
 
 

@@ -7,12 +7,12 @@ from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from shortuuid import uuid
 
-from app.database import BaseModel
-from app.database import db_session
-from app.utils import now_stamp
-from app.exceptions import DBError
-from app.exceptions import Existed
-from app.exceptions import NotFound
+from mint.database import BaseModel
+from mint.database import db_session
+from mint.utils import now_stamp
+from mint.exceptions import DBError
+from mint.exceptions import Existed
+from mint.exceptions import NotFound
 
 
 class Base(object):
