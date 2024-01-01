@@ -186,9 +186,19 @@ class FileModel(BaseModel, Base):
         }
 
     @classmethod
+    def delete_by_filename(cls, filename: str):
+        rets, counts = cls.find(filename=filename)
+        rets[0].deleteAt = now_stamp()
+        try:
+            db_session.commit()
+        except Exception:
+            raise DBError('delete [%s] failed' % filename)
+
+    @classmethod
     def find_by_filename(cls, filename: str):
         try:
-            file: FileModel = cls.query.filter_by(filename=filename).first()
+            file: FileModel = cls.query.filter_by(
+                filename=filename, deleteAt=None).first()
         except Exception:
             raise DBError
 

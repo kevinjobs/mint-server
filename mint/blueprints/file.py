@@ -9,7 +9,10 @@ from mint.utils import ensure_path
 from mint.utils import compress_image
 from mint.utils import read_image_wh
 from mint.utils.reponse import response
+from mint.utils.reponse import find_success
+from mint.utils.reponse import del_success
 from mint.utils.auth import PermCheck
+from mint.utils.parser import Parser
 from mint.exceptions import NotAllowed
 
 
@@ -128,3 +131,30 @@ def get(filename: str):
         return send_from_directory(filepath, origin_filename)
 
     return send_from_directory(filepath, filename)
+
+
+@file_bp.get('/file/list')
+def get_file_list():
+    # 只有超级用户才可以查看后台文件列表
+    PermCheck.is_superuser()
+    args = {}
+    args['offset'] = int
+    args['limit'] = int
+    kw = Parser.parse_args(**args)
+    files, counts = FileModel.find(**kw)
+    return find_success({
+        'totals': counts,
+        'amount': len(files),
+        'offset': kw.get('offset') or 0,
+        'limit': kw.get('limit') or 10,
+        'files': [file.to_dict() for file in files]
+    })
+
+
+@file_bp.delete('/file')
+def delete_a_file():
+    # 只有超级用户才可以删除文件
+    PermCheck.is_superuser()
+    filename = Parser.parse_args(filename=str).get('filename')
+    FileModel.delete_by_filename(filename)
+    return del_success()
