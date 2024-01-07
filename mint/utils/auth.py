@@ -31,6 +31,9 @@ def verify_token(token):
 
 
 def resolve_token():
+    """获取 token 中的内容
+    Return: 用于生成 token 的内容
+    """
     token = extract_token()
     payload = verify_token(token)
     return payload
