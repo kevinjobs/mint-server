@@ -4,7 +4,9 @@ from sqlalchemy import Column
 from sqlalchemy import Integer
 from sqlalchemy import String
 from sqlalchemy import func
+from sqlalchemy import ForeignKey
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import relationship
 from shortuuid import uuid
 
 from mint.database import BaseModel
@@ -172,6 +174,9 @@ class FileModel(BaseModel, Base):
     origin = Column(String, nullable=False)
     filepath = Column(String, nullable=False)
     filename = Column(String, nullable=False)
+    # 链接外键
+    user_id = Column(String, ForeignKey("users.id"))
+    user = relationship("Users", backref="user_files")
 
     def __init__(self, **kw):
         self.origin = kw.get('origin')

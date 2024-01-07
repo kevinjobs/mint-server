@@ -30,3 +30,7 @@ class SecretCode:
 
 class FilePath:
     INVITATION_FILE = 'invitations.json'
+
+
+class DBConfig:
+    PATH = 'sqlite:///mintforge.sqlite'
