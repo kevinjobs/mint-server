@@ -136,7 +136,7 @@ def get(filename: str):
 @file_bp.get('/file/list')
 def get_file_list():
     # 只有超级用户才可以查看后台文件列表
-    PermCheck.is_superuser()
+    PermCheck.superuser()
     args = {}
     args['offset'] = int
     args['limit'] = int
@@ -154,7 +154,7 @@ def get_file_list():
 @file_bp.delete('/file')
 def delete_a_file():
     # 只有超级用户才可以删除文件
-    PermCheck.is_superuser()
+    PermCheck.superuser()
     filename = Parser.parse_args(filename=str).get('filename')
     FileModel.delete_by_filename(filename)
     return del_success()

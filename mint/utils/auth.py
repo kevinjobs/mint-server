@@ -68,14 +68,6 @@ def generate_token(**kw):
 
 class PermCheck:
     @staticmethod
-    def is_superuser():
-        ret = resolve_token()
-        if ret['role'] == 'superuser':
-            return True
-        if ret['group'] == 'superuser':
-            return True
-
-    @staticmethod
     def superuser():
         return PermCheck.check_permission(
             resolve_token(),
