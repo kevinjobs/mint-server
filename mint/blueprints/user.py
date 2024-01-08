@@ -66,7 +66,7 @@ def update_user():
     args['location'] = str
 
     # 暂时只允许 superuser 调整用户等级
-    if PermCheck.is_superuser():
+    if PermCheck.superuser():
         args['role'] = str
         args['group'] = str
 

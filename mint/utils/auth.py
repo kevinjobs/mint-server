@@ -103,7 +103,6 @@ class PermCheck:
 
     @staticmethod
     def check_permission(user, roles, groups):
-
         if user.get('role') in roles or user.get('group') in groups:
             return True
         else:
