@@ -174,9 +174,6 @@ class FileModel(BaseModel, Base):
     origin = Column(String, nullable=False)
     filepath = Column(String, nullable=False)
     filename = Column(String, nullable=False)
-    # 链接外键
-    user_id = Column(String, ForeignKey("users.id"))
-    user = relationship("Users", backref="user_files")
 
     def __init__(self, **kw):
         self.origin = kw.get('origin')
