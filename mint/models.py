@@ -167,6 +167,13 @@ class UserModel(BaseModel, Base):
     def check_password(self, password) -> bool:
         return check_password(self.password, password)
 
+    @classmethod
+    def update(cls, **kw) -> None:
+        password = kw.get('password')
+        if password:
+            kw['password'] = gen_password(password, 'pbkdf2:sha1', 16)
+        super().update(**kw)
+
 
 class FileModel(BaseModel, Base):
     __tablename__ = 'files'

@@ -6,6 +6,7 @@ from mint.utils.parser import Parser
 from mint.utils.auth import PermCheck
 from mint.utils.auth import generate_token
 from mint.utils import open_invitation
+from mint.utils import gen_invitation
 from mint.exceptions import IncorrectInfo
 
 
@@ -28,6 +29,13 @@ def get_invitation_list():
         datas = invis
 
     return find_success({'invitations': datas})
+
+
+@auth_bp.post('/genInvitations')
+def gen_invitation_list():
+    PermCheck.superuser()
+    gen_invitation()
+    return response(0, '生成邀请码成功')
 
 
 @auth_bp.post('/token')
