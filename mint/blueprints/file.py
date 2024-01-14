@@ -47,7 +47,7 @@ def upload_file():
     # 原文件名
     origin = file.filename
     # 拓展名
-    ext = file.filename.split('.')[-1]
+    ext = file.filename.split('.')[-1].lower()
     # 重命名，以防止不安全的文件名
     filename = '%s.%s' % (uuid(), ext)
     # 构建下载路径

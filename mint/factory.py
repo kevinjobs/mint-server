@@ -18,7 +18,7 @@ def create_app(test_config=None):
         DATABASE=os.path.join(app.instance_path, 'mintforge.sqlite'),
         SQLALCHEMY_DATABASE_URI='sqlite:///db.sqlite3',
         UPLOAD_FOLDER=os.path.join(os.getcwd(), 'upload'),
-        MAX_CONTENT_LENGTH=4 * 1024 * 1024,
+        MAX_CONTENT_LENGTH=8 * 1024 * 1024,
         STATIC_FOLDER='static',
         STATIC_URL_PATH='/static'
     )
