@@ -70,3 +70,10 @@ class IncorrectInfo(RestfulError):
         super().__init__(*args)
         self.msg = args[0] if args else RespMsg.INCORRET_INFO
         self.code = RespCode.INCORRET_INFO
+
+
+class ParamsMissing(RestfulError):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
+        self.msg = args[0] if args else RespMsg.PARAMS_MISSING
+        self.code = RespCode.PARAMS_MISSING

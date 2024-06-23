@@ -5,6 +5,8 @@ from mint.utils.reponse import response
 from mint.utils.parser import Parser
 from mint.utils.auth import PermCheck
 from mint.utils.auth import generate_token
+from mint.utils.auth import resolve_token
+from mint.utils.auth import get_sts_credential
 from mint.utils import open_invitation
 from mint.utils import gen_invitation
 from mint.exceptions import IncorrectInfo
@@ -49,3 +51,14 @@ def get_token():
     return response(0, '获取 TOKEN 成功', {
         'token': generate_token(**users[0].to_dict())
     })
+
+
+@auth_bp.get('/sts')
+def sts_server():
+    PermCheck.common_above()
+    username = resolve_token().get('username')
+    kw = Parser.parse_args(bucket=str, region=str, action=str)
+
+    credits = get_sts_credential(username, **kw)
+
+    return response(0, '获取 STS 成功', credits)

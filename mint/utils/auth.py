@@ -1,7 +1,13 @@
+import os
 import jwt
+import json
 from datetime import datetime
 from datetime import timedelta
 from flask import request
+
+from sts.sts import Sts
+from sts.sts import Scope
+
 from mint.constants import SecretCode
 from mint.exceptions import InvalidToken
 from mint.exceptions import NoPermission
@@ -110,3 +116,28 @@ class PermCheck:
             group = user.get('group')
             s = '没有访问权限，用户角色[{}]，需要{}，用户组[{}]，需要{}'
             raise NoPermission(s.format(role, roles, group, groups))
+
+
+def get_sts_credential(username: str, **options):
+    action = options.get('action') or '*'
+    bucket = options.get('bucket') or r'gallery-1252473272'
+    region = options.get('region') or r'ap-nanjing'
+    
+    prefix = f'photos/{username}/*'
+
+    scopes = list()
+    scopes.append(Scope(action, bucket, region, prefix))
+
+    config = {
+        'sts_scheme': 'https',
+        'sts_url': 'sts.tencentcloudapi.com',
+        'duration_seconds': options.get('duration') or 1800,
+        'secret_id': os.getenv('COS_SECRET_ID'),
+        'secret_key': os.getenv('COS_SECRET_KEY'),
+        'region': 'ap-nanjing',
+        'policy': Sts.get_policy(scopes)
+    }
+
+    sts = Sts(config)
+    resp = sts.get_credential()
+    return resp

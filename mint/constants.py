@@ -3,6 +3,8 @@ class RespCode:
     ERROR = 1
     DB_ERROR = 9001
     NOT_FOUND = 4004
+    PARAMS_MISSING = 4001
+
     EXISTED = 5001
     NO_PERMISSION = 4000
     NOT_ALLOWED = 4007
@@ -16,6 +18,8 @@ class RespMsg:
     ERROR = 'unknown error'
     DB_ERROR = 'database error'
     NOT_FOUND = 'the resource doesnt exist'
+    PARAMS_MISSING = '缺少参数'
+
     EXISTED = 'the resource existed'
     NO_PERMISSION = 'no permission to access'
     NOT_ALLOWED = 'not allowed'
