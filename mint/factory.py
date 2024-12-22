@@ -1,5 +1,6 @@
 import os
 
+from dotenv import load_dotenv
 from flask import Flask
 from flask_cors import CORS
 from werkzeug.exceptions import HTTPException
@@ -14,6 +15,8 @@ from mint.exceptions import RestfulError
 
 
 def create_app(test_config=None):
+    load_dotenv(verbose=True)
+
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
         SECRET_KEY="dev",
