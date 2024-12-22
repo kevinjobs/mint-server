@@ -1,20 +1,13 @@
-from werkzeug.security import generate_password_hash as gen_password
-from werkzeug.security import check_password_hash as check_password
-from sqlalchemy import Column
-from sqlalchemy import Integer
-from sqlalchemy import String
-from sqlalchemy import func
-from sqlalchemy import ForeignKey
+from shortuuid import uuid
+from sqlalchemy import Column, Float, ForeignKey, Integer, String, func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import relationship
-from shortuuid import uuid
+from werkzeug.security import check_password_hash as check_password
+from werkzeug.security import generate_password_hash as gen_password
 
-from mint.database import BaseModel
-from mint.database import db_session
+from mint.database import BaseModel, db_session
+from mint.exceptions import DBError, Existed, NotFound
 from mint.utils import now_stamp
-from mint.exceptions import DBError
-from mint.exceptions import Existed
-from mint.exceptions import NotFound
 
 
 class Base(object):
@@ -39,8 +32,8 @@ class Base(object):
             db_session.commit()
             return
         except IntegrityError as e:
-            if e.code == 'gkpj':
-                raise Existed('某个字段未通过唯一值验证')
+            if e.code == "gkpj":
+                raise Existed("某个字段未通过唯一值验证")
             else:
                 raise DBError(str(e))
         except Exception as e:
@@ -49,40 +42,38 @@ class Base(object):
     def to_dict(self) -> dict:
         d = {}
         for attr, value in self.__dict__.items():
-            if not attr.startswith('_sa_instance'):
+            if not attr.startswith("_sa_instance"):
                 d[attr] = value
-        del d['deleteAt']
+        del d["deleteAt"]
         return d
 
     @classmethod
     def find(cls, **kw):
         kw = cls.purge_kw(kw)
-        offset = kw.get('offset')
-        limit = kw.get('limit')
+        offset = kw.get("offset")
+        limit = kw.get("limit")
 
         if offset is not None:
-            del kw['offset']
+            del kw["offset"]
         else:
             offset = 0
 
         if limit is not None:
-            del kw['limit']
+            del kw["limit"]
         else:
             limit = 10
 
-        kw['deleteAt'] = None
+        kw["deleteAt"] = None
 
         try:
-            counts = db_session.query(func.count(cls.id)).filter_by(**kw) \
-                .scalar()
+            counts = db_session.query(func.count(cls.id)).filter_by(**kw).scalar()
 
-            rets = cls.query.filter_by(**kw) \
-                .order_by(-cls.createAt).offset(offset).limit(limit).all()
+            rets = cls.query.filter_by(**kw).order_by(-cls.createAt).offset(offset).limit(limit).all()
         except Exception as e:
             raise DBError(str(e))
 
         if rets is None or len(rets) == 0:
-            raise NotFound('cannot find: [%s]' % cls.concat_kw(kw))
+            raise NotFound("cannot find: [%s]" % cls.concat_kw(kw))
 
         return rets, counts
 
@@ -99,17 +90,17 @@ class Base(object):
             # db_session.delete(ret)
             db_session.commit()
         except Exception:
-            raise DBError('delete [%s] failed' % uid)
+            raise DBError("delete [%s] failed" % uid)
 
     @classmethod
     def update(cls, **kw):
         kw = cls.purge_kw(kw)
-        ret = cls.find_by_uid(kw.get('uid'))
+        ret = cls.find_by_uid(kw.get("uid"))
 
         for k, v in kw.items():
             setattr(ret, k, v)
 
-        if hasattr(ret, 'updateAt'):
+        if hasattr(ret, "updateAt"):
             ret.updateAt = now_stamp()
 
         try:
@@ -122,46 +113,46 @@ class Base(object):
     def concat_kw(kw: dict):
         arr = []
         for k, v in kw.items():
-            s = '{}:{}'.format(k, v)
+            s = "{}:{}".format(k, v)
             arr.append(s)
-        return ','.join(arr)
+        return ",".join(arr)
 
     @staticmethod
     def purge_kw(kw: dict):
         kws = {**kw}
         for k, v in kws.items():
-            if v is None or v == 'all':
+            if v is None or v == "all":
                 del kw[k]
         return kw
 
 
 class UserModel(BaseModel, Base):
-    __tablename__ = 'users'
+    __tablename__ = "users"
 
     username = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
     #
-    nickname = Column(String, default='')
-    avatar = Column(String, default='')
-    birthday = Column(String, default='')
+    nickname = Column(String, default="")
+    avatar = Column(String, default="")
+    birthday = Column(String, default="")
     gender = Column(String, nullable=True)
-    location = Column(String, default='')
-    motto = Column(String, default='')
-    description = Column(String, default='')
+    location = Column(String, default="")
+    motto = Column(String, default="")
+    description = Column(String, default="")
     # commom, admin, superuser
-    role = Column(String, default='common')
-    group = Column(String, default='')
+    role = Column(String, default="common")
+    group = Column(String, default="")
     #
     invitation = Column(String, nullable=False)
 
     def __init__(self, **kw):
         super().__init__(**kw)
-        self.password = gen_password(self.password, 'pbkdf2:sha1', 16)
+        self.password = gen_password(self.password, "pbkdf2:sha1", 16)
 
     def to_dict(self) -> dict:
         d = super().to_dict()
-        if d.get('password'):
-            del d['password']
+        if d.get("password"):
+            del d["password"]
         return d
 
     def check_password(self, password) -> bool:
@@ -169,29 +160,29 @@ class UserModel(BaseModel, Base):
 
     @classmethod
     def update(cls, **kw) -> None:
-        password = kw.get('password')
+        password = kw.get("password")
         if password:
-            kw['password'] = gen_password(password, 'pbkdf2:sha1', 16)
+            kw["password"] = gen_password(password, "pbkdf2:sha1", 16)
         super().update(**kw)
 
 
 class FileModel(BaseModel, Base):
-    __tablename__ = 'files'
+    __tablename__ = "files"
 
     origin = Column(String, nullable=False)
     filepath = Column(String, nullable=False)
     filename = Column(String, nullable=False)
 
     def __init__(self, **kw):
-        self.origin = kw.get('origin')
-        self.filepath = kw.get('filepath')
-        self.filename = kw.get('filename')
+        self.origin = kw.get("origin")
+        self.filepath = kw.get("filepath")
+        self.filename = kw.get("filename")
 
     def to_dict(self):
         return {
-            'origin': self.origin,
-            'filepath': self.filepath,
-            'filename': self.filename,
+            "origin": self.origin,
+            "filepath": self.filepath,
+            "filename": self.filename,
         }
 
     @classmethod
@@ -201,13 +192,12 @@ class FileModel(BaseModel, Base):
         try:
             db_session.commit()
         except Exception:
-            raise DBError('delete [%s] failed' % filename)
+            raise DBError("delete [%s] failed" % filename)
 
     @classmethod
     def find_by_filename(cls, filename: str):
         try:
-            file: FileModel = cls.query.filter_by(
-                filename=filename, deleteAt=None).first()
+            file: FileModel = cls.query.filter_by(filename=filename, deleteAt=None).first()
         except Exception:
             raise DBError
 
@@ -218,25 +208,60 @@ class FileModel(BaseModel, Base):
 
 
 class PostModel(BaseModel, Base):
-    __tablename__ = 'posts'
+    __tablename__ = "posts"
 
-    createAt = Column(Integer, default=now_stamp)
-    publishAt = Column(Integer, nullable=True)
-    updateAt = Column(Integer, nullable=True)
     # post type: article, photo, etc..
-    type = Column(String, default='article')
+    type = Column(String, default="article")
 
     title = Column(String, unique=True, nullable=False)
     author = Column(String, nullable=False)
-    content = Column(String, default='')
-    excerpt = Column(String, default='')
+    content = Column(String, default="")
+    excerpt = Column(String, default="")
+    description = Column(String, default="")
 
     # cover = Column(String, nullable=True)
-    status = Column(String, default='draft')
-    tags = Column(String, default='')
-    category = Column(String, default='')
-    format = Column(String, default='plain')
+    status = Column(String, default="draft")
+    tags = Column(String, default="")
+    category = Column(String, default="")
+    format = Column(String, default="plain")
 
-    url = Column(String, default='')
-    exif = Column(String, default='')
-    description = Column(String, default='')
+    #
+    image = relationship("ImageModel", backref="posts")
+    image_uid = Column(String, ForeignKey("images.uid"))
+
+    def to_dict(self):
+        d = super().to_dict()
+        d["image"] = self.image.to_dict() if self.image else {}
+        return d
+
+
+class ImageModel(BaseModel, Base):
+    __tablename__ = "images"
+
+    title = Column(String)
+    author = Column(String)
+    description = Column(String)
+    width = Column(Integer)
+    height = Column(Integer)
+    #
+    latitude = Column(Float)
+    longitude = Column(Float)
+    latitudeRef = Column(String)
+    longitudeRef = Column(String)
+    altitude = Column(Float)
+    altitudeRef = Column(String)
+    #
+    aperture = Column(String)
+    focalLength = Column(Integer)
+    iso = Column(Integer)
+    exposure = Column(String)
+    lens = Column(String)
+    model = Column(String)
+    #
+    uri = Column(String)
+
+    #
+    def to_dict(self):
+        d = super().to_dict()
+        d["posts"] = [post.uid for post in self.posts]
+        return d
