@@ -33,7 +33,8 @@ class Base(object):
             return
         except IntegrityError as e:
             if e.code == "gkpj":
-                raise Existed("某个字段未通过唯一值验证")
+                col = str(e).split("\n")[0].split(":")[1].strip()
+                raise Existed(f"存在相同的字段:[{col}],该字段不能重复")
             else:
                 raise DBError(str(e))
         except Exception as e:
@@ -44,7 +45,12 @@ class Base(object):
         for attr, value in self.__dict__.items():
             if not attr.startswith("_sa_instance"):
                 d[attr] = value
-        del d["deleteAt"]
+
+        try:
+            del d["deleteAt"]
+        except KeyError:
+            pass
+
         return d
 
     @classmethod
@@ -119,6 +125,16 @@ class Base(object):
 
     @staticmethod
     def purge_kw(kw: dict):
+        """
+        从给定的字典中删除值为None或"all"的键值对。
+
+        Args:
+            kw (dict): 待处理的字典。
+
+        Returns:
+            dict: 删除了值为None或"all"的键值对后的字典。
+
+        """
         kws = {**kw}
         for k, v in kws.items():
             if v is None or v == "all":
@@ -248,17 +264,17 @@ class ImageModel(BaseModel, Base):
     longitude = Column(Float)
     latitudeRef = Column(String)
     longitudeRef = Column(String)
-    altitude = Column(Float)
+    altitude = Column(String)
     altitudeRef = Column(String)
     #
     aperture = Column(String)
-    focalLength = Column(Integer)
+    focalLength = Column(String)
     iso = Column(Integer)
     exposure = Column(String)
     lens = Column(String)
     model = Column(String)
     #
-    uri = Column(String)
+    uri = Column(String, unique=True)
 
     #
     def to_dict(self):
