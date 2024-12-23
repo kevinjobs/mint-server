@@ -1,17 +1,18 @@
 import os
 
-from dotenv import load_dotenv
 from flask import Flask
+from dotenv import load_dotenv
 from flask_cors import CORS
 from werkzeug.exceptions import HTTPException
 
+from mint.database import init_db
+from mint.database import db_session
+from mint.exceptions import RestfulError
 from mint.blueprints.auth import auth_bp
 from mint.blueprints.file import file_bp
-from mint.blueprints.image import image_bp
 from mint.blueprints.post import post_bp
 from mint.blueprints.user import user_bp
-from mint.database import db_session, init_db
-from mint.exceptions import RestfulError
+from mint.blueprints.image import image_bp
 
 
 def create_app(test_config=None):

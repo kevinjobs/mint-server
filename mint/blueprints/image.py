@@ -2,7 +2,10 @@ from flask import Blueprint
 
 from mint.models import ImageModel
 from mint.utils.parser import Parser
-from mint.utils.reponse import del_success, find_success, save_success, update_success
+from mint.utils.reponse import del_success
+from mint.utils.reponse import find_success
+from mint.utils.reponse import save_success
+from mint.utils.reponse import update_success
 
 image_bp = Blueprint("image", __name__)
 

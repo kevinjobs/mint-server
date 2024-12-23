@@ -1,16 +1,15 @@
-from mint.utils.reponse import response
-from mint.constants import RespCode
-from mint.constants import RespMsg
 from werkzeug.exceptions import HTTPException
+
+from mint.constants import RespMsg
+from mint.constants import RespCode
+from mint.utils.reponse import response
 
 
 class RestfulError(HTTPException):
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
         self.code = self.name if isinstance(self.name, int) else RespCode.ERROR
-        self.msg = \
-            self.description \
-            if isinstance(self.description, str) else RespMsg.ERROR
+        self.msg = self.description if isinstance(self.description, str) else RespMsg.ERROR
 
     def resp(self):
         return response(self.code, self.msg)

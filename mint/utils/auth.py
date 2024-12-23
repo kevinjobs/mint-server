@@ -1,10 +1,10 @@
 import os
-import jwt
 import json
 from datetime import datetime
 from datetime import timedelta
-from flask import request
 
+import jwt
+from flask import request
 from sts.sts import Sts
 from sts.sts import Scope
 
@@ -23,17 +23,17 @@ def verify_token(token):
         Any: a dict includes payload or any
     """
     if token is None:
-        raise InvalidToken('没有提供 TOKEN')
+        raise InvalidToken("没有提供 TOKEN")
 
     try:
-        payload = jwt.decode(token, SecretCode.SALT, algorithms=['HS256'])
+        payload = jwt.decode(token, SecretCode.SALT, algorithms=["HS256"])
         return payload
     except jwt.exceptions.ExpiredSignatureError:
-        raise InvalidToken('TOKEN 已经过期')
+        raise InvalidToken("TOKEN 已经过期")
     except jwt.DecodeError:
-        raise InvalidToken('无法解析 TOKEN')
+        raise InvalidToken("无法解析 TOKEN")
     except jwt.InvalidTokenError:
-        raise InvalidToken('无效的 TOKEN')
+        raise InvalidToken("无效的 TOKEN")
 
 
 def resolve_token():
@@ -51,8 +51,8 @@ def extract_token():
     Returns:
         string: token
     """
-    auth = request.headers.get('Authorization')
-    if auth and auth.startswith('Bearer '):
+    auth = request.headers.get("Authorization")
+    if auth and auth.startswith("Bearer "):
         return auth[7:]
 
 
@@ -62,12 +62,12 @@ def generate_token(**kw):
     Returns:
         str: json web token
     """
-    payload = {**kw, 'exp': datetime.utcnow() + timedelta(days=3)}
+    payload = {**kw, "exp": datetime.utcnow() + timedelta(days=3)}
     params = {
-        'payload': payload,
-        'key': SecretCode.SALT,
-        'algorithm': 'HS256',
-        'headers': {'typ': 'jwt', 'alg': 'HS256'}
+        "payload": payload,
+        "key": SecretCode.SALT,
+        "algorithm": "HS256",
+        "headers": {"typ": "jwt", "alg": "HS256"},
     }
     return jwt.encode(**params)
 
@@ -75,11 +75,7 @@ def generate_token(**kw):
 class PermCheck:
     @staticmethod
     def superuser():
-        return PermCheck.check_permission(
-            resolve_token(),
-            ['superuser'],
-            ['superuser']
-        )
+        return PermCheck.check_permission(resolve_token(), ["superuser"], ["superuser"])
 
     @staticmethod
     def admin_above():
@@ -88,11 +84,7 @@ class PermCheck:
         Returns:
             bool: 检查通过返回 True 否则抛出错误
         """
-        return PermCheck.check_permission(
-            resolve_token(),
-            ['admin', 'superuser'],
-            ['admin']
-        )
+        return PermCheck.check_permission(resolve_token(), ["admin", "superuser"], ["admin"])
 
     @staticmethod
     def common_above():
@@ -101,41 +93,37 @@ class PermCheck:
         Returns:
             bool: 检查通过返回 True 否则抛出错误
         """
-        return PermCheck.check_permission(
-            resolve_token(),
-            ['common', 'admin', 'superuser'],
-            ['admin']
-        )
+        return PermCheck.check_permission(resolve_token(), ["common", "admin", "superuser"], ["admin"])
 
     @staticmethod
     def check_permission(user, roles, groups):
-        if user.get('role') in roles or user.get('group') in groups:
+        if user.get("role") in roles or user.get("group") in groups:
             return True
         else:
-            role = user.get('role')
-            group = user.get('group')
-            s = '没有访问权限，用户角色[{}]，需要{}，用户组[{}]，需要{}'
+            role = user.get("role")
+            group = user.get("group")
+            s = "没有访问权限，用户角色[{}]，需要{}，用户组[{}]，需要{}"
             raise NoPermission(s.format(role, roles, group, groups))
 
 
 def get_sts_credential(username: str, **options):
-    action = options.get('action') or '*'
-    bucket = options.get('bucket') or r'gallery-1252473272'
-    region = options.get('region') or r'ap-nanjing'
-    
-    prefix = f'photos/{username}/*'
+    action = options.get("action") or "*"
+    bucket = options.get("bucket") or r"gallery-1252473272"
+    region = options.get("region") or r"ap-nanjing"
+
+    prefix = f"photos/{username}/*"
 
     scopes = list()
     scopes.append(Scope(action, bucket, region, prefix))
 
     config = {
-        'sts_scheme': 'https',
-        'sts_url': 'sts.tencentcloudapi.com',
-        'duration_seconds': options.get('duration') or 1800,
-        'secret_id': os.getenv('COS_SECRET_ID'),
-        'secret_key': os.getenv('COS_SECRET_KEY'),
-        'region': 'ap-nanjing',
-        'policy': Sts.get_policy(scopes)
+        "sts_scheme": "https",
+        "sts_url": "sts.tencentcloudapi.com",
+        "duration_seconds": options.get("duration") or 1800,
+        "secret_id": os.getenv("COS_SECRET_ID"),
+        "secret_key": os.getenv("COS_SECRET_KEY"),
+        "region": "ap-nanjing",
+        "policy": Sts.get_policy(scopes),
     }
 
     sts = Sts(config)

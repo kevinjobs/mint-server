@@ -1,7 +1,8 @@
 import os
-import cv2
-import time
 import json
+import time
+
+import cv2
 from shortuuid import uuid
 
 from mint.constants import FilePath
@@ -44,15 +45,16 @@ def now_stamp():
 
 def check_invitation(c: str):
     from mint.exceptions import InvalidInvitation
+
     codes = open_invitation()
 
     i = 0
     for invi in codes:
-        if invi['code'] == c and invi['valid']:
+        if invi["code"] == c and invi["valid"]:
             return True
         i += 1
 
-    raise InvalidInvitation('邀请码无效或者已经被使用')
+    raise InvalidInvitation("邀请码无效或者已经被使用")
 
 
 def invalidate_invitation(c: str, username=None):
@@ -60,11 +62,11 @@ def invalidate_invitation(c: str, username=None):
 
     i = 0
     for invi in codes:
-        if invi['code'] == c:
-            codes[i]['valid'] = False
-            codes[i]['registerAt'] = now_stamp()
-            codes[i]['registerBy'] = username if username else ''
-            with open(FilePath.INVITATION_FILE, 'w') as fp:
+        if invi["code"] == c:
+            codes[i]["valid"] = False
+            codes[i]["registerAt"] = now_stamp()
+            codes[i]["registerBy"] = username if username else ""
+            with open(FilePath.INVITATION_FILE, "w") as fp:
                 json.dump(codes, fp, ensure_ascii=False, indent=2)
             return True
         i += 1
@@ -74,19 +76,21 @@ def gen_invitation(counts=10):
     codes = []
     datas = open_invitation()
     for _ in range(0, counts):
-        codes.append({
-            "createAt": now_stamp(),
-            "code": uuid(),
-            "valid": True,
-        })
+        codes.append(
+            {
+                "createAt": now_stamp(),
+                "code": uuid(),
+                "valid": True,
+            }
+        )
 
-    with open(FilePath.INVITATION_FILE, 'w') as fp:
+    with open(FilePath.INVITATION_FILE, "w") as fp:
         json.dump(codes + datas, fp, ensure_ascii=False, indent=2)
 
 
 def open_invitation():
     try:
-        with open(FilePath.INVITATION_FILE, 'r') as f:
+        with open(FilePath.INVITATION_FILE, "r") as f:
             return json.load(f)
     except FileNotFoundError:
         return []

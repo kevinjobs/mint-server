@@ -1,10 +1,14 @@
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config, pool
+from sqlalchemy import pool
+from sqlalchemy import engine_from_config
 
 from alembic import context
+from mint.models import FileModel
+from mint.models import PostModel
+from mint.models import UserModel
+from mint.models import ImageModel
 from mint.database import BaseModel
-from mint.models import FileModel, ImageModel, PostModel, UserModel
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

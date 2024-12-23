@@ -14,27 +14,27 @@ class RespCode:
 
 
 class RespMsg:
-    OK = 'request success'
-    ERROR = 'unknown error'
-    DB_ERROR = 'database error'
-    NOT_FOUND = 'the resource doesnt exist'
-    PARAMS_MISSING = '缺少参数'
+    OK = "request success"
+    ERROR = "unknown error"
+    DB_ERROR = "database error"
+    NOT_FOUND = "the resource doesnt exist"
+    PARAMS_MISSING = "缺少参数"
 
-    EXISTED = 'the resource existed'
-    NO_PERMISSION = 'no permission to access'
-    NOT_ALLOWED = 'not allowed'
-    INVALID_INVITATION = '无效的邀请码'
-    INVALID_TOKEN = 'TOKEN 无效或者已经过期'
-    INCORRET_INFO = '密码错误'
+    EXISTED = "the resource existed"
+    NO_PERMISSION = "no permission to access"
+    NOT_ALLOWED = "not allowed"
+    INVALID_INVITATION = "无效的邀请码"
+    INVALID_TOKEN = "TOKEN 无效或者已经过期"
+    INCORRET_INFO = "密码错误"
 
 
 class SecretCode:
-    SALT = '&(^d)daga234235gfd&*NDF9d8fa&kda(234daf))Ngd23@#%DSFGdf235'
+    SALT = "&(^d)daga234235gfd&*NDF9d8fa&kda(234daf))Ngd23@#%DSFGdf235"
 
 
 class FilePath:
-    INVITATION_FILE = 'invitations.json'
+    INVITATION_FILE = "invitations.json"
 
 
 class DBConfig:
-    PATH = 'sqlite:///mintforge.sqlite'
+    PATH = "sqlite:///mintforge.sqlite"

@@ -1,5 +1,7 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base, scoped_session, sessionmaker
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import scoped_session
+from sqlalchemy.orm import declarative_base
 
 from mint.constants import DBConfig
 
@@ -11,6 +13,9 @@ BaseModel.query = db_session.query_property()
 
 
 def init_db():
-    from mint.models import FileModel, ImageModel, PostModel, UserModel
+    from mint.models import FileModel
+    from mint.models import PostModel
+    from mint.models import UserModel
+    from mint.models import ImageModel
 
     BaseModel.metadata.create_all(bind=engine)

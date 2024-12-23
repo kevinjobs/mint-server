@@ -2,19 +2,19 @@ from mint.constants import RespCode
 
 
 def save_success(data=None):
-    return response(RespCode.OK, 'save success', data)
+    return response(RespCode.OK, "save success", data)
 
 
 def find_success(data):
-    return response(RespCode.OK, 'find success', data)
+    return response(RespCode.OK, "find success", data)
 
 
 def del_success(data=None):
-    return response(RespCode.OK, 'delete success', data)
+    return response(RespCode.OK, "delete success", data)
 
 
 def update_success(data=None):
-    return response(RespCode.OK, 'update success', data)
+    return response(RespCode.OK, "update success", data)
 
 
 def response(code: int, msg: str, data=None):
@@ -29,9 +29,9 @@ def response(code: int, msg: str, data=None):
         dict: response
     """
     r = {
-        'code': code,
-        'msg': msg,
+        "code": code,
+        "msg": msg,
     }
     if data:
-        r['data'] = data
+        r["data"] = data
     return r
