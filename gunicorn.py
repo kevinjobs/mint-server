@@ -1,0 +1,11 @@
+bind = "0.0.0.0:5000"
+workers = 4
+threads = 1
+backlog = 10240
+pidfile = "logs/gunicorn.pid"
+accesslog = "logs/access.log"
+errorlog = "logs/debug.log"
+timeout = 600
+loglevel = 'debug'
+debug = False
+capture_output = True

@@ -2,6 +2,7 @@ import os
 from flask import Flask
 from flask_cors import CORS
 from werkzeug.exceptions import HTTPException
+from dotenv import load_dotenv
 from mint.exceptions import RestfulError
 from mint.database import init_db
 from mint.database import db_session
@@ -12,6 +13,8 @@ from mint.blueprints.post import post_bp
 
 
 def create_app(test_config=None):
+    load_dotenv(verbose=True)
+
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
         SECRET_KEY='dev',
