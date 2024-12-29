@@ -1,7 +1,7 @@
 from flask import Blueprint
 
 from mint.models import PostModel
-from mint.utils.auth import PermCheck
+from mint.decorators import auth_required
 from mint.utils.parser import Parser
 from mint.utils.reponse import del_success
 from mint.utils.reponse import find_success
@@ -37,16 +37,16 @@ def get_post():
 
 
 @post_bp.post("/p")
+@auth_required(['common'])
 def add_post():
-    PermCheck.common_above()
     kw = Parser.parse_json(**ARGS)
     PostModel(**kw).save()
     return save_success()
 
 
 @post_bp.put("/p")
+@auth_required(['common'])
 def update_post():
-    PermCheck.common_above()
     uid = Parser.parse_args(uid=str).get("uid")
     kw = Parser.parse_json(**ARGS)
     PostModel.update(uid=uid, **kw)
@@ -54,8 +54,8 @@ def update_post():
 
 
 @post_bp.delete("/p")
+@auth_required(['common'])
 def delete_post():
-    PermCheck.admin_above()
     uid = Parser.parse_args(uid=str).get("uid")
     PostModel.delete_by_uid(uid)
     return del_success()

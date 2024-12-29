@@ -1,6 +1,7 @@
 from flask import Blueprint
 
 from mint.models import ImageModel
+from mint.decorators import auth_required
 from mint.utils.parser import Parser
 from mint.utils.reponse import del_success
 from mint.utils.reponse import find_success
@@ -18,14 +19,15 @@ def get_image():
 
 
 @image_bp.delete("/image")
+@auth_required(['common'])
 def delete_image():
-    PermCheck.admin_above()
     uid = Parser.parse_args(uid=str).get("uid")
     ImageModel.delete_by_uid(uid)
     return del_success()
 
 
 @image_bp.put("/image")
+@auth_required(['common'])
 def update_post():
     ARGS = {}
     ARGS["createAt"] = str
@@ -54,7 +56,6 @@ def update_post():
     #
     ARGS["uri"] = str
 
-    PermCheck.common_above()
     uid = Parser.parse_args(uid=str).get("uid")
     kw = Parser.parse_json(**ARGS)
     ImageModel.update(uid=uid, **kw)
@@ -85,6 +86,7 @@ def get_image_list():
 
 
 @image_bp.post("/image")
+@auth_required(['common'])
 def post_image():
     ARGS = {}
     ARGS["createAt"] = str

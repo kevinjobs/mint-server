@@ -3,6 +3,7 @@ from flask import Blueprint
 from mint.utils import check_invitation
 from mint.utils import invalidate_invitation
 from mint.models import UserModel
+from mint.decorators import auth_required
 from mint.utils.auth import PermCheck
 from mint.utils.parser import Parser
 from mint.utils.reponse import del_success
@@ -14,8 +15,8 @@ user_bp = Blueprint("user", __name__, url_prefix="/user")
 
 
 @user_bp.get("")
+@auth_required(['common'])
 def get_user():
-    PermCheck.common_above()
     kw = Parser.parse_args(uid=str, nickname=str, username=str)
     rets, counts = UserModel.find(**kw)
     return find_success({"totals": counts, "amount": len(rets), "users": [ret.to_dict() for ret in rets]})
@@ -50,8 +51,8 @@ def register():
 
 
 @user_bp.put("")
+@auth_required(['admin'])
 def update_user():
-    PermCheck.admin_above()
     args = {}
     args["username"] = str
     args["password"] = str
@@ -77,16 +78,16 @@ def update_user():
 
 
 @user_bp.delete("")
+@auth_required(['admin'])
 def delete_user():
-    PermCheck.admin_above()
     kw = Parser.parse_args(uid=str)
     UserModel.delete_by_uid(kw["uid"])
     return del_success()
 
 
 @user_bp.get("/list")
+@auth_required(['admin'])
 def get_user_list():
-    PermCheck.admin_above()
     kw = Parser.parse_args(offset=int, limit=int, username=str, nickname=str)
     rets, counts = UserModel.find(**kw)
     return find_success({"totals": counts, "amount": len(rets), "users": [ret.to_dict() for ret in rets]})

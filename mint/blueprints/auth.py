@@ -4,7 +4,7 @@ from mint.utils import gen_invitation
 from mint.utils import open_invitation
 from mint.models import UserModel
 from mint.exceptions import IncorrectInfoError
-from mint.utils.auth import PermCheck
+from mint.decorators import auth_required
 from mint.utils.auth import resolve_token
 from mint.utils.auth import generate_token
 from mint.utils.auth import get_sts_credential
@@ -16,8 +16,8 @@ auth_bp = Blueprint("auth", __name__)
 
 
 @auth_bp.get("/invitation/list")
+@auth_required(['superuser'])
 def get_invitation_list():
-    PermCheck.superuser()
     status = Parser.parse_args(status=str).get("status")
 
     invis = open_invitation()
@@ -34,8 +34,8 @@ def get_invitation_list():
 
 
 @auth_bp.post("/genInvitations")
+@auth_required(['superuser'])
 def gen_invitation_list():
-    PermCheck.superuser()
     gen_invitation()
     return response(0, "生成邀请码成功")
 
@@ -52,11 +52,11 @@ def get_token():
 
 
 @auth_bp.get("/sts")
+@auth_required(['common'])
 def sts_server():
-    PermCheck.common_above()
     username = resolve_token().get("username")
     kw = Parser.parse_args(bucket=str, region=str, action=str)
 
-    credits = get_sts_credential(username, **kw)
+    credentials = get_sts_credential(username, **kw)
 
-    return response(0, "获取 STS 成功", credits)
+    return response(0, "获取 STS 成功", credentials)

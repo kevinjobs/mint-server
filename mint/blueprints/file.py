@@ -11,7 +11,7 @@ from mint.utils import read_image_wh
 from mint.utils import compress_image
 from mint.models import FileModel
 from mint.exceptions import NotAllowedError
-from mint.utils.auth import PermCheck
+from mint.decorators import auth_required
 from mint.utils.parser import Parser
 from mint.utils.reponse import response
 from mint.utils.reponse import del_success
@@ -27,6 +27,7 @@ file_bp = Blueprint("file", __name__)
 
 
 @file_bp.post("/upload")
+@auth_required(['common'])
 def upload_file():
     """upload a file to server
 
@@ -41,7 +42,6 @@ def upload_file():
         body: form-data
     """
     # 注册用户以上可以上传文件
-    PermCheck.common_above()
     upload_path = app.config["UPLOAD_FOLDER"]
     # 解析文件体
     file = request.files["file"]
@@ -126,9 +126,8 @@ def get(filename: str):
 
 
 @file_bp.get("/file/list")
+@auth_required(['superuser']) # 只有超级用户才可以查看后台文件列表
 def get_file_list():
-    # 只有超级用户才可以查看后台文件列表
-    PermCheck.superuser()
     args = {}
     args["offset"] = int
     args["limit"] = int
@@ -146,9 +145,8 @@ def get_file_list():
 
 
 @file_bp.delete("/file")
+@auth_required(['superuser']) # 只有超级用户才可以删除文件
 def delete_a_file():
-    # 只有超级用户才可以删除文件
-    PermCheck.superuser()
     filename = Parser.parse_args(filename=str).get("filename")
     FileModel.delete_by_filename(filename)
     return del_success()
