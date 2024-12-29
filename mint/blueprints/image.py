@@ -10,68 +10,68 @@ from mint.utils.reponse import update_success
 
 image_bp = Blueprint("image", __name__)
 
+ARGS = {
+    "createAt": str,
+    "updateAt": str,
+    "title": str,
+    "author": str,
+    "description": str,
+    "width": int,
+    "height": int,
+    "latitude": float,
+    "longitude": float,
+    "latitudeRef": str,
+    "longitudeRef": str,
+    "altitude": str,
+    "altitudeRef": str,
+    "aperture": str,
+    "focalLength": str,
+    "iso": int,
+    "exposure": str,
+    "lens": str,
+    "model": str,
+    "uri": str,
+}
+
 
 @image_bp.get("/image")
 def get_image():
+
     kw = Parser.parse_args(uid=str)
+
     rets, counts = ImageModel.find(**kw)
+
     return find_success({"image": rets[0].to_dict()})
 
 
 @image_bp.delete("/image")
-@auth_required(['common'])
+@auth_required(["common"])
 def delete_image():
+
     uid = Parser.parse_args(uid=str).get("uid")
+
     ImageModel.delete_by_uid(uid)
     return del_success()
 
 
 @image_bp.put("/image")
-@auth_required(['common'])
+@auth_required(["common"])
 def update_post():
-    ARGS = {}
-    ARGS["createAt"] = str
-    ARGS["updateAt"] = str
-    #
-    ARGS["title"] = str
-    ARGS["author"] = str
-    ARGS["description"] = str
-    #
-    ARGS["width"] = int
-    ARGS["height"] = int
-    #
-    ARGS["latitude"] = float
-    ARGS["longitude"] = float
-    ARGS["latitudeRef"] = str
-    ARGS["longitudeRef"] = str
-    ARGS["altitude"] = str
-    ARGS["altitudeRef"] = str
-    #
-    ARGS["aperture"] = str
-    ARGS["focalLength"] = str
-    ARGS["iso"] = int
-    ARGS["exposure"] = str
-    ARGS["lens"] = str
-    ARGS["model"] = str
-    #
-    ARGS["uri"] = str
 
     uid = Parser.parse_args(uid=str).get("uid")
+
     kw = Parser.parse_json(**ARGS)
+
     ImageModel.update(uid=uid, **kw)
     return update_success()
 
 
 @image_bp.get("/image-list")
 def get_image_list():
-    args = {}
-    args["title"] = str
-    args["author"] = str
 
-    args["offset"] = int
-    args["limit"] = int
+    list_args = {"title": str, "author": str, "offset": int, "limit": int}
 
-    kw = Parser.parse_args(**args)
+    kw = Parser.parse_args(**list_args)
 
     rets, counts = ImageModel.find(**kw)
     return find_success(
@@ -86,36 +86,13 @@ def get_image_list():
 
 
 @image_bp.post("/image")
-@auth_required(['common'])
+@auth_required(["common"])
 def post_image():
-    ARGS = {}
-    ARGS["createAt"] = str
-    ARGS["updateAt"] = str
-    #
-    ARGS["title"] = str
-    ARGS["author"] = str
-    ARGS["description"] = str
-    #
-    ARGS["width"] = int
-    ARGS["height"] = int
-    #
-    ARGS["latitude"] = float
-    ARGS["longitude"] = float
-    ARGS["latitudeRef"] = str
-    ARGS["longitudeRef"] = str
-    ARGS["altitude"] = str
-    ARGS["altitudeRef"] = str
-    #
-    ARGS["aperture"] = str
-    ARGS["focalLength"] = str
-    ARGS["iso"] = int
-    ARGS["exposure"] = str
-    ARGS["lens"] = str
-    ARGS["model"] = str
-    #
-    ARGS["uri"] = str
 
     data = Parser.parse_json(**ARGS)
+
     image = ImageModel(**data)
+
     image.save()
+
     return save_success()

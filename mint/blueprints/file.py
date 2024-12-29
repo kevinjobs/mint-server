@@ -10,8 +10,8 @@ from mint.utils import ensure_path
 from mint.utils import read_image_wh
 from mint.utils import compress_image
 from mint.models import FileModel
-from mint.exceptions import NotAllowedError
 from mint.decorators import auth_required
+from mint.exceptions import NotAllowedError
 from mint.utils.parser import Parser
 from mint.utils.reponse import response
 from mint.utils.reponse import del_success
@@ -22,12 +22,11 @@ AUDIO_EXTENSIONS = ["mp3", "flac", "ape", "m4a"]
 DOC_EXTENSIONS = ["txt", "ppt", "doc", "xls", "pptx", "xlsx", "docx", "pdf"]
 ALLOWED_EXTENSIONS = IMG_EXTENSIONS + AUDIO_EXTENSIONS + DOC_EXTENSIONS
 
-
 file_bp = Blueprint("file", __name__)
 
 
 @file_bp.post("/upload")
-@auth_required(['common'])
+@auth_required(["common"])
 def upload_file():
     """upload a file to server
 
@@ -126,11 +125,9 @@ def get(filename: str):
 
 
 @file_bp.get("/file/list")
-@auth_required(['superuser']) # 只有超级用户才可以查看后台文件列表
+@auth_required(["superuser"])  # 只有超级用户才可以查看后台文件列表
 def get_file_list():
-    args = {}
-    args["offset"] = int
-    args["limit"] = int
+    args = {"offset": int, "limit": int}
     kw = Parser.parse_args(**args)
     files, counts = FileModel.find(**kw)
     return find_success(
@@ -145,7 +142,7 @@ def get_file_list():
 
 
 @file_bp.delete("/file")
-@auth_required(['superuser']) # 只有超级用户才可以删除文件
+@auth_required(["superuser"])  # 只有超级用户才可以删除文件
 def delete_a_file():
     filename = Parser.parse_args(filename=str).get("filename")
     FileModel.delete_by_filename(filename)

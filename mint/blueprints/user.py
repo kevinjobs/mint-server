@@ -15,7 +15,7 @@ user_bp = Blueprint("user", __name__, url_prefix="/user")
 
 
 @user_bp.get("")
-@auth_required(['common'])
+@auth_required(["common"])
 def get_user():
     kw = Parser.parse_args(uid=str, nickname=str, username=str)
     rets, counts = UserModel.find(**kw)
@@ -24,21 +24,20 @@ def get_user():
 
 @user_bp.post("")
 def register():
-    args = {}
-    args["username"] = str
-    args["password"] = str
-    args["nickname"] = str
-
-    args["location"] = str
-    args["birthday"] = str
-    args["gender"] = str
+    args = {
+        "username": str,
+        "password": str,
+        "nickname": str,
+        "location": str,
+        "birthday": str,
+        "gender": str,
+        "invitation": str,
+        "motto": str,
+        "avatar": str,
+        "description": str,
+    }
 
     # 注册时需验证邀请码
-    args["invitation"] = str
-
-    args["motto"] = str
-    args["avatar"] = str
-    args["description"] = str
 
     kw = Parser.parse_json(**args)
     # 验证邀请码
@@ -51,16 +50,9 @@ def register():
 
 
 @user_bp.put("")
-@auth_required(['admin'])
+@auth_required(["admin"])
 def update_user():
-    args = {}
-    args["username"] = str
-    args["password"] = str
-    args["nickname"] = str
-
-    args["gender"] = str
-    args["birthday"] = int
-    args["location"] = str
+    args = {"username": str, "password": str, "nickname": str, "gender": str, "birthday": int, "location": str}
 
     # 暂时只允许 superuser 调整用户等级
     if PermCheck.superuser():
@@ -78,7 +70,7 @@ def update_user():
 
 
 @user_bp.delete("")
-@auth_required(['admin'])
+@auth_required(["admin"])
 def delete_user():
     kw = Parser.parse_args(uid=str)
     UserModel.delete_by_uid(kw["uid"])
@@ -86,7 +78,7 @@ def delete_user():
 
 
 @user_bp.get("/list")
-@auth_required(['admin'])
+@auth_required(["admin"])
 def get_user_list():
     kw = Parser.parse_args(offset=int, limit=int, username=str, nickname=str)
     rets, counts = UserModel.find(**kw)
