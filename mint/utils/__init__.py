@@ -44,7 +44,7 @@ def now_stamp():
 
 
 def check_invitation(c: str):
-    from mint.exceptions import InvalidInvitation
+    from mint.exceptions import InvalidInvitationError
 
     codes = open_invitation()
 
@@ -54,7 +54,7 @@ def check_invitation(c: str):
             return True
         i += 1
 
-    raise InvalidInvitation("邀请码无效或者已经被使用")
+    raise InvalidInvitationError("邀请码无效或者已经被使用")
 
 
 def invalidate_invitation(c: str, username=None):

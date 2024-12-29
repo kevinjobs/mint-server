@@ -9,8 +9,8 @@ from sts.sts import Sts
 from sts.sts import Scope
 
 from mint.constants import SecretCode
-from mint.exceptions import InvalidToken
-from mint.exceptions import NoPermission
+from mint.exceptions import InvalidTokenError
+from mint.exceptions import NoPermissionError
 
 
 def verify_token(token):
@@ -23,17 +23,17 @@ def verify_token(token):
         Any: a dict includes payload or any
     """
     if token is None:
-        raise InvalidToken("没有提供 TOKEN")
+        raise InvalidTokenError("没有提供 TOKEN")
 
     try:
         payload = jwt.decode(token, SecretCode.SALT, algorithms=["HS256"])
         return payload
     except jwt.exceptions.ExpiredSignatureError:
-        raise InvalidToken("TOKEN 已经过期")
+        raise InvalidTokenError("TOKEN 已经过期")
     except jwt.DecodeError:
-        raise InvalidToken("无法解析 TOKEN")
+        raise InvalidTokenError("无法解析 TOKEN")
     except jwt.InvalidTokenError:
-        raise InvalidToken("无效的 TOKEN")
+        raise InvalidTokenError("无效的 TOKEN")
 
 
 def resolve_token():
@@ -103,7 +103,7 @@ class PermCheck:
             role = user.get("role")
             group = user.get("group")
             s = "没有访问权限，用户角色[{}]，需要{}，用户组[{}]，需要{}"
-            raise NoPermission(s.format(role, roles, group, groups))
+            raise NoPermissionError(s.format(role, roles, group, groups))
 
 
 def get_sts_credential(username: str, **options):

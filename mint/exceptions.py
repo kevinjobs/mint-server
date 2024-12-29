@@ -22,56 +22,56 @@ class DBError(RestfulError):
         self.code = RespCode.DB_ERROR
 
 
-class Existed(RestfulError):
+class ExistedError(RestfulError):
     def __init__(self, *args):
         super().__init__(*args)
         self.msg = args[0] if args else RespMsg.EXISTED
         self.code = RespCode.EXISTED
 
 
-class NotFound(RestfulError):
+class NotFoundError(RestfulError):
     def __init__(self, *args):
         super().__init__(*args)
         self.msg = args[0] if args else RespMsg.NOT_FOUND
         self.code = RespCode.NOT_FOUND
 
 
-class NoPermission(RestfulError):
+class NoPermissionError(RestfulError):
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
         self.msg = args[0] if args else RespMsg.NO_PERMISSION
         self.code = RespCode.NO_PERMISSION
 
 
-class NotAllowed(RestfulError):
+class NotAllowedError(RestfulError):
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
         self.msg = args[0] if args else RespMsg.NOT_ALLOWED
         self.code = RespCode.NOT_ALLOWED
 
 
-class InvalidInvitation(RestfulError):
+class InvalidInvitationError(RestfulError):
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
         self.msg = args[0] if args else RespMsg.INVALID_INVITATION
         self.code = RespCode.INVALID_INVITATION
 
 
-class InvalidToken(RestfulError):
+class InvalidTokenError(RestfulError):
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
         self.msg = args[0] if args else RespMsg.INVALID_TOKEN
         self.code = RespCode.INVALID_TOKEN
 
 
-class IncorrectInfo(RestfulError):
+class IncorrectInfoError(RestfulError):
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
         self.msg = args[0] if args else RespMsg.INCORRET_INFO
         self.code = RespCode.INCORRET_INFO
 
 
-class ParamsMissing(RestfulError):
+class ParamsMissingError(RestfulError):
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
         self.msg = args[0] if args else RespMsg.PARAMS_MISSING

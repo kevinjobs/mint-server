@@ -10,7 +10,7 @@ from mint.utils import ensure_path
 from mint.utils import read_image_wh
 from mint.utils import compress_image
 from mint.models import FileModel
-from mint.exceptions import NotAllowed
+from mint.exceptions import NotAllowedError
 from mint.utils.auth import PermCheck
 from mint.utils.parser import Parser
 from mint.utils.reponse import response
@@ -56,7 +56,7 @@ def upload_file():
     # 判断是否为允许上传的文件类型
     # to-do: 应当根据文件的实际类型来判断
     if ext not in ALLOWED_EXTENSIONS:
-        raise NotAllowed("文件格式[%s]不被支持" % ext)
+        raise NotAllowedError("文件格式[%s]不被支持" % ext)
 
     # 根据不同的文件类型，保存到对应的文件夹
     filetype = ""

@@ -3,7 +3,7 @@ from flask import Blueprint
 from mint.utils import gen_invitation
 from mint.utils import open_invitation
 from mint.models import UserModel
-from mint.exceptions import IncorrectInfo
+from mint.exceptions import IncorrectInfoError
 from mint.utils.auth import PermCheck
 from mint.utils.auth import resolve_token
 from mint.utils.auth import generate_token
@@ -46,7 +46,7 @@ def get_token():
     users, counts = UserModel.find(username=kw.get("username"))
 
     if not users[0].check_password(kw.get("password")):
-        raise IncorrectInfo
+        raise IncorrectInfoError
 
     return response(0, "获取 TOKEN 成功", {"token": generate_token(**users[0].to_dict())})
 

@@ -14,8 +14,8 @@ from mint.utils import now_stamp
 from mint.database import BaseModel
 from mint.database import db_session
 from mint.exceptions import DBError
-from mint.exceptions import Existed
-from mint.exceptions import NotFound
+from mint.exceptions import ExistedError
+from mint.exceptions import NotFoundError
 
 
 class Base(object):
@@ -42,7 +42,7 @@ class Base(object):
         except IntegrityError as e:
             if e.code == "gkpj":
                 col = str(e).split("\n")[0].split(":")[1].strip()
-                raise Existed(f"存在相同的字段:[{col}],该字段不能重复")
+                raise ExistedError(f"存在相同的字段:[{col}],该字段不能重复")
             else:
                 raise DBError(str(e))
         except Exception as e:
@@ -87,7 +87,7 @@ class Base(object):
             raise DBError(str(e))
 
         if rets is None or len(rets) == 0:
-            raise NotFound("cannot find: [%s]" % cls.concat_kw(kw))
+            raise NotFoundError("cannot find: [%s]" % cls.concat_kw(kw))
 
         return rets, counts
 
@@ -226,7 +226,7 @@ class FileModel(BaseModel, Base):
             raise DBError
 
         if not file:
-            raise NotFound
+            raise NotFoundError
 
         return file
 
