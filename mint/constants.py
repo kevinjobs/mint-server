@@ -1,31 +1,19 @@
-class RespCode:
-    OK = 0
-    ERROR = 1
-    DB_ERROR = 9001
-    NOT_FOUND = 4004
-    PARAMS_MISSING = 4001
+class Response:
+    OK = (0, "请求成功")
+    ERROR = (1, "未知错误")
 
-    EXISTED = 5001
-    NO_PERMISSION = 4000
-    NOT_ALLOWED = 4007
-    INVALID_INVITATION = 8001
-    INVALID_TOKEN = 8002
-    INCORRET_INFO = 9009
+    NO_PERMISSION = (4000, "没有权限")
+    PARAMS_MISSING = (4001, "缺少参数")
+    NOT_FOUND = (4004, "查找的资源不存的")
+    NOT_ALLOWED = (4007, "不被允许的操作")
 
+    EXISTED = (5001, "资源已经存在")
 
-class RespMsg:
-    OK = "request success"
-    ERROR = "unknown error"
-    DB_ERROR = "database error"
-    NOT_FOUND = "the resource doesnt exist"
-    PARAMS_MISSING = "缺少参数"
+    INVALID_USER_INFO = (8000, "账户或密码错误")
+    INVALID_INVITATION = (8001, "无效的邀请码")
+    INVALID_TOKEN = (8002, "TOKEN 无效或者已经过期")
 
-    EXISTED = "the resource existed"
-    NO_PERMISSION = "no permission to access"
-    NOT_ALLOWED = "not allowed"
-    INVALID_INVITATION = "无效的邀请码"
-    INVALID_TOKEN = "TOKEN 无效或者已经过期"
-    INCORRET_INFO = "密码错误"
+    DB_ERROR = (9001, "数据库发生错误")
 
 
 class SecretCode:
